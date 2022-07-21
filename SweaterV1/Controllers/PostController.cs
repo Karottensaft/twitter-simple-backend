@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using SweaterV1.Infrastructure.Repositories;
 
 namespace SweaterV1.Controllers
@@ -10,22 +9,19 @@ namespace SweaterV1.Controllers
     [Route("[controller]")]
     public class PostController : ControllerBase
     {
-        private readonly PostRepository _postRepository;
-        public PostController(SweaterDBContext context, PostRepository postRepository)
-        {
-            _postRepository = postRepository;
-        }
+        private UnitOfWork _unitOfWork = new UnitOfWork();
 
         [HttpGet]
         public async Task<IEnumerable<PostModel>> GetListAsync()
         {
-            return await _postRepository.GetEntityListAsync();
+            var post = await _unitOfWork.PostRepository.GetEntityListAsync();
+            return post;
         }
 
         [HttpGet("{id}")]
         public async Task<PostModel> GetAsync(int id)
         {
-            var post = await _postRepository.GetEntityByIdAsync(id);
+            var post = await _unitOfWork.PostRepository.GetEntityByIdAsync(id);
             if (post == null)
                 NotFound();
             return post;
@@ -38,24 +34,24 @@ namespace SweaterV1.Controllers
             {
                 BadRequest();
             }
-            _postRepository.PostEntity(post);
-            await _postRepository.SaveAsync();
+            _unitOfWork.PostRepository.PostEntity(post);
+            await _unitOfWork.SaveAsync();
             return post;
         }
 
         [HttpPut("{id}")]
         public async Task<PostModel> Put(PostModel post)
         {
-            _postRepository.UpdateEntity(post);
-            await _postRepository.SaveAsync();
+            _unitOfWork.PostRepository.UpdateEntity(post);
+            await _unitOfWork.SaveAsync();
             return post;
         }
 
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
-            _postRepository.DeleteEntity(id);
-            await _postRepository.SaveAsync();
+            _unitOfWork.PostRepository.DeleteEntity(id);
+            await _unitOfWork.SaveAsync();
         }
     }
 }

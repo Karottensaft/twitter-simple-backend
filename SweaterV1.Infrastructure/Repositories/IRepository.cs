@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SweaterV1.Domain.Models;
-
-namespace SweaterV1.Infrastructure.Repositories
+﻿namespace SweaterV1.Infrastructure.Repositories
 {
     public interface IRepository<T> : IDisposable
         where T : class
@@ -16,6 +9,6 @@ namespace SweaterV1.Infrastructure.Repositories
         void PostEntity(T item); // создание объекта
         void UpdateEntity(T item); // обновление объекта
         void DeleteEntity(int id); // удаление объекта по id
-        Task SaveAsync(); // сохранение изменений
+        //Task SaveAsync(); // сохранение изменений
     }
 }

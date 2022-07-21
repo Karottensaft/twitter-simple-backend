@@ -1,8 +1,6 @@
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using SweaterV1.Infrastructure.Repositories;
 
 namespace SweaterV1.Controllers
@@ -11,22 +9,19 @@ namespace SweaterV1.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserRepository _userRepository;
-        public UserController(SweaterDBContext context, UserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        private UnitOfWork _unitOfWork = new UnitOfWork();
 
         [HttpGet]
         public async Task<IEnumerable<UserModel>> GetListAsync()
         {
-            return await _userRepository.GetEntityListAsync();
+            var user = await _unitOfWork.UserRepository.GetEntityListAsync();
+            return user;
         }
 
         [HttpGet("{id}")]
         public async Task<UserModel> GetAsync(int id)
         {
-            var user = await _userRepository.GetEntityByIdAsync(id);
+            var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(id);
             if (user == null)
                 NotFound();
             return user;
@@ -39,24 +34,24 @@ namespace SweaterV1.Controllers
             {
                 BadRequest();
             }
-            _userRepository.PostEntity(user);
-            await _userRepository.SaveAsync();
+            _unitOfWork.UserRepository.PostEntity(user);
+            await _unitOfWork.SaveAsync();
             return  user;
         }
 
         [HttpPut("{id}")]
         public async Task<UserModel> Put(UserModel user)
         {
-            _userRepository.UpdateEntity(user);
-            await _userRepository.SaveAsync();
+            _unitOfWork.UserRepository.UpdateEntity(user);
+            await _unitOfWork.SaveAsync();
             return user;
         }
 
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
-            _userRepository.DeleteEntity(id);
-            await _userRepository.SaveAsync();
+            _unitOfWork.UserRepository.DeleteEntity(id);
+            await _unitOfWork.SaveAsync();
         }
     }
 }

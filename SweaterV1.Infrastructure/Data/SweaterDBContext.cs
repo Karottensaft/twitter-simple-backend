@@ -15,7 +15,7 @@ namespace SweaterV1.Infrastructure.Data
 
         public SweaterDBContext()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
