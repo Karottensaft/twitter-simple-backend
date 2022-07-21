@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32002.185
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweaterV1", "SweaterV1\SweaterV1.csproj", "{1135E234-5206-4BF6-80AD-3E2F4077E3CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SweaterV1.WebAPI", "SweaterV1\SweaterV1.WebAPI.csproj", "{1135E234-5206-4BF6-80AD-3E2F4077E3CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SweaterV1.Domain", "SweaterV1.Domain\SweaterV1.Domain.csproj", "{B00E8E23-5EB5-416A-9AC7-06227A4270E3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SweaterV1.Services", "SweaterV1.Services\SweaterV1.Services.csproj", "{F348AF35-3EBE-4478-8053-68B7FE0360B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SweaterV1.Infrastructure", "SweaterV1.Infrastructure\SweaterV1.Infrastructure.csproj", "{5C078FB5-A038-47DE-9433-6AEBC5DB39AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{1135E234-5206-4BF6-80AD-3E2F4077E3CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1135E234-5206-4BF6-80AD-3E2F4077E3CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1135E234-5206-4BF6-80AD-3E2F4077E3CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B00E8E23-5EB5-416A-9AC7-06227A4270E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B00E8E23-5EB5-416A-9AC7-06227A4270E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B00E8E23-5EB5-416A-9AC7-06227A4270E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B00E8E23-5EB5-416A-9AC7-06227A4270E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F348AF35-3EBE-4478-8053-68B7FE0360B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F348AF35-3EBE-4478-8053-68B7FE0360B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F348AF35-3EBE-4478-8053-68B7FE0360B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F348AF35-3EBE-4478-8053-68B7FE0360B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C078FB5-A038-47DE-9433-6AEBC5DB39AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C078FB5-A038-47DE-9433-6AEBC5DB39AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C078FB5-A038-47DE-9433-6AEBC5DB39AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C078FB5-A038-47DE-9433-6AEBC5DB39AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

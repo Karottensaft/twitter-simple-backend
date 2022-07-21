@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-namespace SweaterV1.Models
+
+
+namespace SweaterV1.Domain.Models
 {
     public class UserModel
     {
@@ -12,5 +14,4 @@ namespace SweaterV1.Models
         public string? LastName { get; set; }
         public string? Role { get; set; }
     }
-
 }
