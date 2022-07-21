@@ -10,19 +10,10 @@ namespace SweaterV1.Controllers
     [Route("[controller]")]
     public class PostController : ControllerBase
     {
-
-        private SweaterDBContext _db;
-        private PostRepository _postRepository;
+        private readonly PostRepository _postRepository;
         public PostController(SweaterDBContext context, PostRepository postRepository)
         {
-            _db = context;
             _postRepository = postRepository;
-            //if (!_db.Users.Any())
-            //{
-            //    _db.Users.Add(new UserModel { UserId = 1, Login = "Karottensaft", Password = "12345678", Mail = "Karottensaft.Rus@gmail.com", FirstName = "Anton", LastName = "Aboba", Role = "admin" });
-
-            //    _db.SaveChanges();
-            //}
         }
 
         [HttpGet]
@@ -34,7 +25,7 @@ namespace SweaterV1.Controllers
         [HttpGet("{id}")]
         public async Task<PostModel> GetAsync(int id)
         {
-            var post = await _db.Posts.FirstOrDefaultAsync(x => x.PostId == id);
+            var post = await _postRepository.GetEntityByIdAsync(id);
             if (post == null)
                 NotFound();
             return post;
@@ -47,40 +38,24 @@ namespace SweaterV1.Controllers
             {
                 BadRequest();
             }
-
-            _db.Posts.Add(post);
-            await _db.SaveChangesAsync();
+            _postRepository.PostEntity(post);
+            await _postRepository.SaveAsync();
             return post;
         }
 
         [HttpPut("{id}")]
         public async Task<PostModel> Put(PostModel post)
         {
-            if (post == null)
-            {
-                BadRequest();
-            }
-            if (!_db.Posts.Any(x => x.PostId == post.PostId))
-            {
-                NotFound();
-            }
-
-            _db.Update(post);
-            await _db.SaveChangesAsync();
+            _postRepository.UpdateEntity(post);
+            await _postRepository.SaveAsync();
             return post;
         }
 
         [HttpDelete("{id}")]
-        public async Task<PostModel> Delete(int id)
+        public async Task Delete(int id)
         {
-            var post = _db.Posts.FirstOrDefault(x => x.PostId == id);
-            if (post == null)
-            {
-                NotFound();
-            }
-            _db.Posts.Remove(post);
-            await _db.SaveChangesAsync();
-            return post;
+            _postRepository.DeleteEntity(id);
+            await _postRepository.SaveAsync();
         }
     }
 }

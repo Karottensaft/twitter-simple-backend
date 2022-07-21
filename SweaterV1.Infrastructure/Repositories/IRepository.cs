@@ -13,9 +13,9 @@ namespace SweaterV1.Infrastructure.Repositories
 
         Task<IEnumerable<T>> GetEntityListAsync(); // получение всех объектов
         Task<T> GetEntityByIdAsync(int id); // получение одного объекта по id
-        void InsertEntity(T item); // создание объекта
+        void PostEntity(T item); // создание объекта
         void UpdateEntity(T item); // обновление объекта
         void DeleteEntity(int id); // удаление объекта по id
-        void Save(); // сохранение изменений
+        Task SaveAsync(); // сохранение изменений
     }
 }

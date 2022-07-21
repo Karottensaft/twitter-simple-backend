@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Data;
@@ -10,19 +11,10 @@ namespace SweaterV1.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-
-        private SweaterDBContext _db;
-        private UserRepository _userRepository;
+        private readonly UserRepository _userRepository;
         public UserController(SweaterDBContext context, UserRepository userRepository)
         {
-            _db = context;
             _userRepository = userRepository;
-            //if (!_db.Users.Any())
-            //{
-            //    _db.Users.Add(new UserModel { UserId = 1, Login = "Karottensaft", Password = "12345678", Mail = "Karottensaft.Rus@gmail.com", FirstName = "Anton", LastName = "Aboba", Role = "admin" });
-
-            //    _db.SaveChanges();
-            //}
         }
 
         [HttpGet]
@@ -47,40 +39,24 @@ namespace SweaterV1.Controllers
             {
                 BadRequest();
             }
-
-            _userRepository.InsertEntity(user);
-            await _db.SaveChangesAsync();
-            return user;
+            _userRepository.PostEntity(user);
+            await _userRepository.SaveAsync();
+            return  user;
         }
 
         [HttpPut("{id}")]
         public async Task<UserModel> Put(UserModel user)
         {
-            if (user == null)
-            {
-                BadRequest();
-            }
-            if (!_db.Users.Any(x => x.UserId == user.UserId))
-            {
-                NotFound();
-            }
-
-            _db.Update(user);
-            await _db.SaveChangesAsync();
+            _userRepository.UpdateEntity(user);
+            await _userRepository.SaveAsync();
             return user;
         }
 
         [HttpDelete("{id}")]
-        public async Task<UserModel> Delete(int id)
+        public async Task Delete(int id)
         {
-            var user = _db.Users.FirstOrDefault(x => x.UserId == id);
-            if (user == null)
-            {
-                NotFound();
-            }
-            _db.Users.Remove(user);
-            await _db.SaveChangesAsync();
-            return user;
+            _userRepository.DeleteEntity(id);
+            await _userRepository.SaveAsync();
         }
     }
 }

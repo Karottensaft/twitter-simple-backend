@@ -27,7 +27,7 @@ namespace SweaterV1.Infrastructure.Repositories
             return await _db.Posts.FindAsync(id);
         }
 
-        public void InsertEntity(PostModel post)
+        public void PostEntity(PostModel post)
         {
             _db.Posts.Add(post);
         }
@@ -43,7 +43,7 @@ namespace SweaterV1.Infrastructure.Repositories
             _db.Entry(post).State = EntityState.Modified;
         }
 
-        public async void Save()
+        public async Task SaveAsync()
         {
             await _db.SaveChangesAsync();
         }
