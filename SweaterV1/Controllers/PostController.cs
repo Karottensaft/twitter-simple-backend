@@ -2,6 +2,7 @@
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Data;
 using SweaterV1.Infrastructure.Repositories;
+using SweaterV1.Services.Services;
 
 namespace SweaterV1.Controllers
 {
@@ -9,19 +10,24 @@ namespace SweaterV1.Controllers
     [Route("[controller]")]
     public class PostController : ControllerBase
     {
-        private UnitOfWork _unitOfWork = new UnitOfWork();
+        private readonly PostService _postService;
+
+        public PostController(PostService postService)
+        {
+            _postService = postService;
+        }
 
         [HttpGet]
         public async Task<IEnumerable<PostModel>> GetListAsync()
         {
-            var post = await _unitOfWork.PostRepository.GetEntityListAsync();
+            var post = await _postService.GerListOfEntities();
             return post;
         }
 
         [HttpGet("{id}")]
         public async Task<PostModel> GetAsync(int id)
         {
-            var post = await _unitOfWork.PostRepository.GetEntityByIdAsync(id);
+            var post = await _postService.GetEntity(id);
             if (post == null)
                 NotFound();
             return post;
@@ -34,24 +40,21 @@ namespace SweaterV1.Controllers
             {
                 BadRequest();
             }
-            _unitOfWork.PostRepository.PostEntity(post);
-            await _unitOfWork.SaveAsync();
+            await _postService.CreateEntity(post);
             return post;
         }
 
         [HttpPut("{id}")]
         public async Task<PostModel> Put(PostModel post)
         {
-            _unitOfWork.PostRepository.UpdateEntity(post);
-            await _unitOfWork.SaveAsync();
+            await _postService.UpdateEntity(post);
             return post;
         }
 
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
-            _unitOfWork.PostRepository.DeleteEntity(id);
-            await _unitOfWork.SaveAsync();
+            await _postService.DeleteEntity(id);
         }
     }
 }

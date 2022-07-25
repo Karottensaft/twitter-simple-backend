@@ -11,7 +11,7 @@ namespace SweaterV1.Infrastructure.Repositories
 {
     public class UnitOfWork : IDisposable
     {
-        private SweaterDBContext _context = new SweaterDBContext();
+        private SweaterDBContext _db = new SweaterDBContext();
         private UserRepository _userRepository;
         private PostRepository _postRepository;
 
@@ -22,7 +22,7 @@ namespace SweaterV1.Infrastructure.Repositories
 
                 if (this._userRepository == null)
                 {
-                    this._userRepository = new UserRepository(_context);
+                    this._userRepository = new UserRepository(_db);
                 }
                 return _userRepository;
             }
@@ -35,7 +35,7 @@ namespace SweaterV1.Infrastructure.Repositories
 
                 if (this._postRepository == null)
                 {
-                    this._postRepository = new PostRepository(_context);
+                    this._postRepository = new PostRepository(_db);
                 }
 
                 return _postRepository;
@@ -44,7 +44,7 @@ namespace SweaterV1.Infrastructure.Repositories
 
         public async Task SaveAsync()
         {
-            await _context.SaveChangesAsync();
+            await _db.SaveChangesAsync();
         }
 
         private bool disposed = false;
@@ -55,7 +55,7 @@ namespace SweaterV1.Infrastructure.Repositories
             {
                 if (disposing)
                 {
-                    _context.Dispose();
+                    _db.Dispose();
                 }
             }
             this.disposed = true;

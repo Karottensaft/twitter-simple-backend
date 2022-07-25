@@ -1,5 +1,7 @@
 using SweaterV1.Infrastructure.Data;
 using SweaterV1.Infrastructure.Repositories;
+using SweaterV1.Services.Services;
+
 //using SweaterV1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<UnitOfWork>();
-//builder.Services.AddScoped<UserOperations>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<PostRepository>();
 
 var app = builder.Build();
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SweaterV1.Domain.Models;
+using SweaterV1.Infrastructure.Repositories;
 
 namespace SweaterV1.Infrastructure.Data
 {
@@ -23,5 +24,12 @@ namespace SweaterV1.Infrastructure.Data
             optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=UsersBD;Username=postgres;Password=Boss1234");
             //optionsBuilder.UseInMemoryDatabase("Users");
         }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<UserModel>()
+        //        .HasMany(c => c.Posts)
+        //        .WithOne(o => o.User)
+        //        .IsRequired();
+        //}
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Data;
 using SweaterV1.Infrastructure.Repositories;
+using SweaterV1.Services.Services;
 
 namespace SweaterV1.Controllers
 {
@@ -9,19 +10,24 @@ namespace SweaterV1.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private UnitOfWork _unitOfWork = new UnitOfWork();
+        private readonly UserService _userService;
+
+        public UserController(UserService userService)
+        {
+            _userService = userService;
+        }
 
         [HttpGet]
         public async Task<IEnumerable<UserModel>> GetListAsync()
         {
-            var user = await _unitOfWork.UserRepository.GetEntityListAsync();
+            var user = await _userService.GerListOfEntities();
             return user;
         }
 
         [HttpGet("{id}")]
         public async Task<UserModel> GetAsync(int id)
         {
-            var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(id);
+            var user = await _userService.GetEntity(id);
             if (user == null)
                 NotFound();
             return user;
@@ -34,24 +40,21 @@ namespace SweaterV1.Controllers
             {
                 BadRequest();
             }
-            _unitOfWork.UserRepository.PostEntity(user);
-            await _unitOfWork.SaveAsync();
+            await _userService.CreateEntity(user);
             return  user;
         }
 
         [HttpPut("{id}")]
         public async Task<UserModel> Put(UserModel user)
         {
-            _unitOfWork.UserRepository.UpdateEntity(user);
-            await _unitOfWork.SaveAsync();
+            await _userService.UpdateEntity(user);
             return user;
         }
 
         [HttpDelete("{id}")]
         public async Task Delete(int id)
         {
-            _unitOfWork.UserRepository.DeleteEntity(id);
-            await _unitOfWork.SaveAsync();
+            await _userService.DeleteEntity(id);
         }
     }
 }
