@@ -24,7 +24,7 @@ namespace SweaterV1.Services.Services
 //        _validaton.AddError("FirstName", "FirstName is required.");
 //    if (user.LastName.Trim().Length == 0)
 //        _validaton.AddError("LastName", "LastName is required.");
-//        return _validaton.IsValid;
+//    return _validaton.IsValid;
 //}
 //if (!ValidateUser(user))
 //    return;

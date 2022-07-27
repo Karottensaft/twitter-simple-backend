@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
-using SweaterV1.Infrastructure.Data;
-using SweaterV1.Infrastructure.Repositories;
 using SweaterV1.Services.Services;
 
 namespace SweaterV1.Controllers

@@ -1,45 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SweaterV1.Domain.Models;
+﻿using Microsoft.EntityFrameworkCore;
 using SweaterV1.Infrastructure.Data;
-using SweaterV1.Infrastructure.Repositories;
 
 namespace SweaterV1.Infrastructure.Repositories
 {
     public class UnitOfWork : IDisposable
     {
-        private SweaterDBContext _db = new SweaterDBContext();
-        private UserRepository _userRepository;
-        private PostRepository _postRepository;
+        private SweaterDBContext _db;
+        //private UserRepository _userRepository;
+        //private PostRepository _postRepository;
 
+        public UnitOfWork(DbContextOptions<SweaterDBContext> options)
+        {
+            _db = new SweaterDBContext(options);
+            UserRepository = new UserRepository(_db);
+            PostRepository = new PostRepository(_db);
+        }
         public UserRepository UserRepository
         {
-            get
-            {
+            get;
+            private set;
 
-                if (this._userRepository == null)
-                {
-                    this._userRepository = new UserRepository(_db);
-                }
-                return _userRepository;
-            }
         }
 
         public PostRepository PostRepository
         {
-            get
-            {
+            get;
+            private set;
 
-                if (this._postRepository == null)
-                {
-                    this._postRepository = new PostRepository(_db);
-                }
-
-                return _postRepository;
-            }
         }
 
         public async Task SaveAsync()

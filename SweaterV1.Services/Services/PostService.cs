@@ -11,7 +11,7 @@ namespace SweaterV1.Services.Services
 {
     public class PostService : IService<PostModel>
     {
-        private UnitOfWork _unitOfWork = new UnitOfWork();
+        private UnitOfWork _unitOfWork;
 
         public PostService(UnitOfWork unitOfWork)
         {

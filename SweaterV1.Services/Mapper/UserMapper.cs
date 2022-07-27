@@ -14,16 +14,16 @@ namespace SweaterV1.Services.Mapper
 
     public class UserMapper
     {
-        //public static UserModelInformationDto ToUserModelInformationDtoMap(PostModel user)
-        //{
-            //return new UserModelInformationDto()
-            //{
-            //    Login = user.Login,
-            //    Email = user.Email,
-            //    FirstName = user.FirstName,
-            //    LastName = user.LastName
-            //};
-        //}
+        public static UserModelInformationDto ToUserModelInformationDtoMap(UserModel user)
+        {
+            return new UserModelInformationDto()
+            {
+                Login = user.Login,
+                Email = user.Mail,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+        }
 
         //public static AddressDTO ToAddressDTOMap(Address address)
         //{

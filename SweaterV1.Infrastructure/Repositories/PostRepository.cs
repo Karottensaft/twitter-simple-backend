@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Data;
 
@@ -10,7 +6,7 @@ namespace SweaterV1.Infrastructure.Repositories
 {
     public class PostRepository : IRepository<PostModel>, IDisposable
     {
-        private SweaterDBContext _db;
+        private readonly SweaterDBContext _db;
 
         public PostRepository(SweaterDBContext db)
         {
