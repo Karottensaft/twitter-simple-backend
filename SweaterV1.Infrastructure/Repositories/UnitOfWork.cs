@@ -5,13 +5,11 @@ namespace SweaterV1.Infrastructure.Repositories
 {
     public class UnitOfWork : IDisposable
     {
-        private SweaterDBContext _db;
-        //private UserRepository _userRepository;
-        //private PostRepository _postRepository;
+        private readonly SweaterDbContext _db;
 
-        public UnitOfWork(DbContextOptions<SweaterDBContext> options)
+        public UnitOfWork(DbContextOptions<SweaterDbContext> options)
         {
-            _db = new SweaterDBContext(options);
+            _db = new SweaterDbContext(options);
             UserRepository = new UserRepository(_db);
             PostRepository = new PostRepository(_db);
         }
@@ -34,18 +32,18 @@ namespace SweaterV1.Infrastructure.Repositories
             await _db.SaveChangesAsync();
         }
 
-        private bool disposed = false;
+        private bool _disposed;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!this._disposed)
             {
                 if (disposing)
                 {
                     _db.Dispose();
                 }
             }
-            this.disposed = true;
+            this._disposed = true;
         }
 
         public void Dispose()

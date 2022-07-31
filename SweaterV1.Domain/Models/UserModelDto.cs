@@ -13,7 +13,10 @@ namespace SweaterV1.Domain.Models
         public string Login { get; set; }
         [Required]
         public string Password { get; set; }
+
+        public string Role { get; set; }
     }
+
     public class UserModelRegistrationDto
     {
         [Required]
@@ -27,23 +30,22 @@ namespace SweaterV1.Domain.Models
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
+
     }
 
     public class UserModelInformationDto
     {
         public string Login { get; set; }
-        public string Email { get; set; }
+        public string Mail { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
     }
 
-    public class UserModelMainDto
+    public class UserModelChangeDto
     {
-        public string Login { get; set; }
         public string Password { get; set; }
         public string Mail { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Role { get; set; }
     }
 }

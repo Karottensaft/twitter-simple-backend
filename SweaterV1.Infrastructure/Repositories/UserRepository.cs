@@ -4,11 +4,11 @@ using SweaterV1.Infrastructure.Data;
 
 namespace SweaterV1.Infrastructure.Repositories
 {
-    public class UserRepository : IRepository<UserModel>, IDisposable
+    public class UserRepository : IRepository<UserModel>
     {
-        private SweaterDBContext _db;
+        private readonly SweaterDbContext _db;
 
-        public UserRepository(SweaterDBContext db)
+        public UserRepository(SweaterDbContext db)
         {
             this._db = db;
         }
@@ -17,34 +17,30 @@ namespace SweaterV1.Infrastructure.Repositories
         {
             return await _db.Users.ToListAsync();
         }
-        //async
+
         public async Task<UserModel> GetEntityByIdAsync(int id)
         {
-            return await _db.Users.FindAsync(id);
+            var user = await _db.Users.FindAsync(id);
+            return user!;
         }
-         // not async
+
         public void PostEntity(UserModel user)
         {
             _db.Users.Add(user);
         }
-        //not async
+
         public void DeleteEntity(int userId)
         {
             var user = _db.Users.Find(userId);
-            _db.Users.Remove(user);
+            _db.Users.Remove(user!);
         }
-        //not async
+
         public void UpdateEntity(UserModel user)
         {
             _db.Entry(user).State = EntityState.Modified;
         }
-        //async
-        public async Task SaveAsync()
-        {
-            await _db.SaveChangesAsync();
-        }
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         protected virtual void Dispose(bool disposing)
         {

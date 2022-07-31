@@ -6,9 +6,9 @@ namespace SweaterV1.Infrastructure.Repositories
 {
     public class PostRepository : IRepository<PostModel>, IDisposable
     {
-        private readonly SweaterDBContext _db;
+        private readonly SweaterDbContext _db;
 
-        public PostRepository(SweaterDBContext db)
+        public PostRepository(SweaterDbContext db)
         {
             this._db = db;
         }

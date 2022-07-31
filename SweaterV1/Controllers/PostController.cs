@@ -23,29 +23,24 @@ namespace SweaterV1.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<PostModel> GetAsync(int id)
+        public async Task<PostModelInformationDto> GetAsync(int id)
         {
-            var post = await _postService.GetEntity(id);
-            if (post == null)
-                NotFound();
-            return post;
+            var user = await _postService.GetEntity(id);
+            return user!;
         }
 
         [HttpPost]
-        public async Task<PostModel> Post(PostModel post)
+        public async Task<PostModelCreationDto> Post(PostModelCreationDto post)
         {
-            if (post == null)
-            {
-                BadRequest();
-            }
-            await _postService.CreateEntity(post);
-            return post;
+            if (post == null) BadRequest();
+            await _postService.CreateEntity(post!);
+            return post!;
         }
 
         [HttpPut("{id}")]
-        public async Task<PostModel> Put(PostModel post)
+        public async Task<PostModelChangeDto> Put(PostModelChangeDto post, int id)
         {
-            await _postService.UpdateEntity(post);
+            await _postService.UpdateEntity(post, id);
             return post;
         }
 

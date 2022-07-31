@@ -1,15 +1,19 @@
 ﻿using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Repositories;
+using AutoMapper;
+using SweaterV1.Services.Services;
 
 namespace SweaterV1.Services.Services;
 
-public class UserService : IService<UserModel>
+public class UserService
 {
     private readonly UnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
 
-    public UserService(UnitOfWork unitOfWork)
+    public UserService(UnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<UserModel>> GerListOfEntities()
@@ -17,21 +21,23 @@ public class UserService : IService<UserModel>
         return await _unitOfWork.UserRepository.GetEntityListAsync();
     }
 
-    public async Task<UserModel> GetEntity(int id)
+    public async Task<UserModelInformationDto> GetEntity(int id)
     {
         var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(id);
-        return user;
+        return _mapper.Map<UserModelInformationDto>(user);
     }
 
-    public async Task CreateEntity(UserModel user)
+    public async Task CreateEntity(UserModelRegistrationDto userMapped)
     {
+        var user = _mapper.Map<UserModel>(userMapped);
         _unitOfWork.UserRepository.PostEntity(user);
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task UpdateEntity(UserModel user)
+    public async Task UpdateEntity(UserModelChangeDto userDto, int id)
     {
-        _unitOfWork.UserRepository.UpdateEntity(user);
+        var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(id);
+        _mapper.Map<UserModelChangeDto, UserModel>(userDto, user);
         await _unitOfWork.SaveAsync();
     }
 

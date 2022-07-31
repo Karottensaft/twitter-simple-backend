@@ -4,18 +4,15 @@ using SweaterV1.Domain.Models;
 
 namespace SweaterV1.Infrastructure.Data
 {
-    public class SweaterDBContext : DbContext
+    public class SweaterDbContext : DbContext
     {
-        public DbSet<UserModel> Users { get; set; }
-        public DbSet<PostModel> Posts { get; set; }
+        public DbSet<UserModel> Users => Set<UserModel>();
+        public DbSet<PostModel> Posts => Set<PostModel>();
 
-        public SweaterDBContext(DbContextOptions<SweaterDBContext> options)
+        public SweaterDbContext(DbContextOptions<SweaterDbContext> options)
             : base(options)
         {
-
             Database.EnsureCreated();
-
         }
     }
-
 }

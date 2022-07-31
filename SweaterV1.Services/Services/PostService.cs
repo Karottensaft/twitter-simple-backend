@@ -1,21 +1,19 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using AutoMapper;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Repositories;
-using System.Collections.Generic;
-using SweaterV1.Services.Services;
-using Microsoft.AspNetCore.Mvc;
 
 
 namespace SweaterV1.Services.Services
 {
-    public class PostService : IService<PostModel>
+    public class PostService
     {
-        private UnitOfWork _unitOfWork;
+        private readonly UnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public PostService(UnitOfWork unitOfWork)
+        public PostService(UnitOfWork unitOfWork, IMapper mapper)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<PostModel>> GerListOfEntities()
@@ -23,22 +21,23 @@ namespace SweaterV1.Services.Services
             return await _unitOfWork.PostRepository.GetEntityListAsync();
         }
 
-        public async Task<PostModel> GetEntity(int id)
+        public async Task<PostModelInformationDto> GetEntity(int id)
         {
-            var post = await _unitOfWork.PostRepository.GetEntityByIdAsync(id);
-            return post;
+            var user = await _unitOfWork.PostRepository.GetEntityByIdAsync(id);
+            return _mapper.Map<PostModelInformationDto>(user);
         }
 
-        public async Task CreateEntity(PostModel post)
+        public async Task CreateEntity(PostModelCreationDto postMapped)
         {
+            var post = _mapper.Map<PostModel>(postMapped);
             _unitOfWork.PostRepository.PostEntity(post);
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task UpdateEntity(PostModel post)
+        public async Task UpdateEntity(PostModelChangeDto postDto, int id)
         {
-
-            _unitOfWork.PostRepository.UpdateEntity(post);
+            var post = await _unitOfWork.PostRepository.GetEntityByIdAsync(id);
+            _mapper.Map<PostModelChangeDto, PostModel>(postDto, post);
             await _unitOfWork.SaveAsync();
         }
 
