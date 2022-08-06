@@ -17,7 +17,15 @@ namespace SweaterV1.Domain.Models
         [ForeignKey("UserModel")]
         public int UserId { get; set; }
 
+        
         public UserModel User { get; set; }
+        public List<CommentModel> Comments { get; set; }
+        public  List<LikeModel> Likes { get; set; }
+        public PostModel()
+        {
+            Comments = new List<CommentModel>();
+            Likes = new List<LikeModel>();
+        }
 
     }
 }

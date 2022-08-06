@@ -16,6 +16,13 @@ public class UserService
         _mapper = mapper;
     }
 
+    public async Task<UserModelLoginDto> LoginAsync(string login, string password)
+    {
+        var user = await _unitOfWork.UserRepository.LoginAsync(login, password);
+
+        return _mapper.Map<UserModelLoginDto>(user);
+    }
+
     public async Task<IEnumerable<UserModel>> GerListOfEntities()
     {
         return await _unitOfWork.UserRepository.GetEntityListAsync();

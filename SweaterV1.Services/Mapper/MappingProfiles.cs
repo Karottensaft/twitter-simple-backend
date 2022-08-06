@@ -59,4 +59,42 @@ namespace SweaterV1.Services.Mapper
             CreateMap<PostModelChangeDto, PostModel>();
         }
     }
+
+    public class CommentInformationProfile : Profile
+    {
+        public CommentInformationProfile()
+        {
+            CreateMap<CommentModel, CommentModelInformationDto>();
+        }
+    }
+    public class CommentCreateProfile : Profile
+    {
+        public CommentCreateProfile()
+        {
+            CreateMap<CommentModelCreationDto, CommentModel>();
+        }
+    }
+    public class CommentChangeProfile : Profile
+    {
+        public CommentChangeProfile()
+        {
+            CreateMap<CommentModelChangeDto, CommentModel>();
+        }
+    }
+
+    public class LikeInformationProfile : Profile
+    {
+        public LikeInformationProfile()
+        {
+            CreateMap<LikeModel, LikeModelInformationDto>();
+        }
+    }
+
+    public class LikeCreateProfile : Profile
+    {
+        public LikeCreateProfile()
+        {
+            CreateMap<LikeModelCreationDto, LikeModel>();
+        }
+    }
 }

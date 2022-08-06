@@ -12,6 +12,8 @@ namespace SweaterV1.Infrastructure.Repositories
             _db = new SweaterDbContext(options);
             UserRepository = new UserRepository(_db);
             PostRepository = new PostRepository(_db);
+            CommentRepository = new CommentRepository(_db);
+            LikeRepository = new LikeRepository(_db);
         }
         public UserRepository UserRepository
         {
@@ -21,6 +23,18 @@ namespace SweaterV1.Infrastructure.Repositories
         }
 
         public PostRepository PostRepository
+        {
+            get;
+            private set;
+
+        }
+        public CommentRepository CommentRepository
+        {
+            get;
+            private set;
+
+        }
+        public LikeRepository LikeRepository
         {
             get;
             private set;

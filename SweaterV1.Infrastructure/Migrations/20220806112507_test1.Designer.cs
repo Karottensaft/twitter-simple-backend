@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SweaterV1.Infrastructure.Data;
@@ -11,9 +12,10 @@ using SweaterV1.Infrastructure.Data;
 namespace SweaterV1.Infrastructure.Migrations
 {
     [DbContext(typeof(SweaterDbContext))]
-    partial class SweaterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220806112507_test1")]
+    partial class test1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

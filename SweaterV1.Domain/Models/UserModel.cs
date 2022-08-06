@@ -14,13 +14,18 @@ namespace SweaterV1.Domain.Models
         public string Mail { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string? Role { get; set; }
 
+        //public string? Role { get; set; }
+        public string Role { get; set; } = "user";
         public List<PostModel> Posts { get; set; }
+        public List<CommentModel> Comments { get; set; }
+        public List<LikeModel> Likes { get; set; }
 
         public UserModel()
         {
             Posts = new List<PostModel>();
+            Comments = new List<CommentModel>();
+            Likes = new List<LikeModel>();
         }
     }
 }

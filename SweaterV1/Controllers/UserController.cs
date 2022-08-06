@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
 using SweaterV1.Services.Services;
@@ -15,36 +16,41 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
-    [HttpGet]
+    [Authorize(Roles = "admin")]
+    [HttpGet("users")]
     public async Task<IEnumerable<UserModel>> GetListAsync()
     {
         var user = await _userService.GerListOfEntities();
         return user;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("user/{id}")]
     public async Task<UserModelInformationDto> GetAsync(int id)
     {
+
         var user = await _userService.GetEntity(id);
         return user!;
     }
 
-    [HttpPost]
+    [HttpPost("registration")]
     public async Task<UserModelRegistrationDto> Post(UserModelRegistrationDto user)
     {
+
         if (user == null) BadRequest();
         await _userService.CreateEntity(user!);
         return user!;
     }
 
-    [HttpPut("{id}")]
+    [Authorize]
+    [HttpPut("user/{id}/user-settings")]
     public async Task<UserModelChangeDto> Put(UserModelChangeDto user, int id)
     {
         await _userService.UpdateEntity(user, id);
         return user;
     }
 
-    [HttpDelete("{id}")]
+    [Authorize]
+    [HttpDelete("user/{id}/deleter")]
     public async Task Delete(int id)
     {
         await _userService.DeleteEntity(id);

@@ -39,6 +39,8 @@ namespace SweaterV1.Domain.Models
         public string Mail { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public List<PostModel> Posts { get; set; }
+
     }
 
     public class UserModelChangeDto

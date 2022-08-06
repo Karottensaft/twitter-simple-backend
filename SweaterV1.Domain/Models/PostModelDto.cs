@@ -14,7 +14,8 @@ namespace SweaterV1.Domain.Models
         [Required]
         public string Contaiment { get; set; }
         [Required]
-        public UserModel User { get; set; }
+        //public UserModel User { get; set; }
+        public int UserId { get; set; }
     }
 
     public class PostModelInformationDto
@@ -23,7 +24,8 @@ namespace SweaterV1.Domain.Models
         public string Contaiment { get; set; }
         public DateTime Created { get; set; }
 
-        public UserModel User { get; set; }
+        //public UserModel User { get; set; }
+        public int UserId { get; set; }
     }
 
     public class PostModelChangeDto

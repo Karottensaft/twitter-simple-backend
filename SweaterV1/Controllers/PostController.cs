@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
 using SweaterV1.Services.Services;
 
 namespace SweaterV1.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    //[Route("[controller]")]
     public class PostController : ControllerBase
     {
         private readonly PostService _postService;
@@ -14,22 +15,29 @@ namespace SweaterV1.Controllers
         {
             _postService = postService;
         }
-
-        [HttpGet]
+        [Authorize(Roles = "admin")]
+        [HttpGet("posts")]
         public async Task<IEnumerable<PostModel>> GetListAsync()
         {
             var post = await _postService.GerListOfEntities();
             return post;
         }
+        [Authorize]
+        [HttpGet("user/{userId}/posts")]
+        public async Task<IEnumerable<PostModelInformationDto>> GetListAsyncByUser(int userId)
+        {
+            var post = await _postService.GerListOfEntitiesByUser(userId);
+            return post;
+        }
 
-        [HttpGet("{id}")]
+        [HttpGet("post/{postId}")]
         public async Task<PostModelInformationDto> GetAsync(int id)
         {
             var user = await _postService.GetEntity(id);
             return user!;
         }
 
-        [HttpPost]
+        [HttpPost("user/{userId}/post-creator")]
         public async Task<PostModelCreationDto> Post(PostModelCreationDto post)
         {
             if (post == null) BadRequest();
@@ -37,14 +45,14 @@ namespace SweaterV1.Controllers
             return post!;
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("user/{userId}/post-settings")]
         public async Task<PostModelChangeDto> Put(PostModelChangeDto post, int id)
         {
             await _postService.UpdateEntity(post, id);
             return post;
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("post/{userId}/deleter")]
         public async Task Delete(int id)
         {
             await _postService.DeleteEntity(id);

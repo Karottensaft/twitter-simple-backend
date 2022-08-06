@@ -18,6 +18,11 @@ namespace SweaterV1.Infrastructure.Repositories
             return await _db.Posts.ToListAsync();
         }
 
+        public async Task<IEnumerable<PostModel>> GetEntityListAsyncByUserId(int userId)
+        {
+            return  await _db.Posts.Where(x => x.UserId == userId).ToListAsync();
+            
+        }
         public async Task<PostModel> GetEntityByIdAsync(int id)
         {
             return await _db.Posts.FindAsync(id);
@@ -39,10 +44,6 @@ namespace SweaterV1.Infrastructure.Repositories
             _db.Entry(post).State = EntityState.Modified;
         }
 
-        public async Task SaveAsync()
-        {
-            await _db.SaveChangesAsync();
-        }
 
         private bool _disposed = false;
 

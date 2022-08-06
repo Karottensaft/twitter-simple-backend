@@ -8,6 +8,8 @@ namespace SweaterV1.Infrastructure.Data
     {
         public DbSet<UserModel> Users => Set<UserModel>();
         public DbSet<PostModel> Posts => Set<PostModel>();
+        public DbSet<CommentModel> Comments => Set<CommentModel>();
+        public DbSet<LikeModel> Likes => Set<LikeModel>();
 
         public SweaterDbContext(DbContextOptions<SweaterDbContext> options)
             : base(options)

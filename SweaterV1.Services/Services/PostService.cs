@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SweaterV1.Domain.Models;
+using SweaterV1.Infrastructure.Data;
 using SweaterV1.Infrastructure.Repositories;
 
 
@@ -19,6 +20,12 @@ namespace SweaterV1.Services.Services
         public async Task<IEnumerable<PostModel>> GerListOfEntities()
         {
             return await _unitOfWork.PostRepository.GetEntityListAsync();
+        }
+        public async Task<IEnumerable<PostModelInformationDto>> GerListOfEntitiesByUser(int userId)
+        {
+            IEnumerable<PostModel> post =  await _unitOfWork.PostRepository.GetEntityListAsyncByUserId(userId);
+            var data = _mapper.Map<IEnumerable<PostModelInformationDto>>(post);
+            return data.ToList();
         }
 
         public async Task<PostModelInformationDto> GetEntity(int id)
