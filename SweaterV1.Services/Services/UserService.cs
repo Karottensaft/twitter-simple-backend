@@ -1,7 +1,9 @@
-﻿using SweaterV1.Domain.Models;
+﻿using System.Diagnostics.Eventing.Reader;
+using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Repositories;
 using AutoMapper;
 using SweaterV1.Services.Services;
+using SweaterV1.Services.HelpingServices;
 
 namespace SweaterV1.Services.Services;
 
@@ -18,9 +20,17 @@ public class UserService
 
     public async Task<UserModelLoginDto> LoginAsync(string login, string password)
     {
-        var user = await _unitOfWork.UserRepository.LoginAsync(login, password);
-
-        return _mapper.Map<UserModelLoginDto>(user);
+        //password = PBKDF2HashHelper.CreatePasswordHash(password);
+        var user = await _unitOfWork.UserRepository.LoginAsync(login);
+        
+        if (PBKDF2HashHelper.VerifyPassword(password, user.Password))
+        {
+            return _mapper.Map<UserModelLoginDto>(user);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public async Task<IEnumerable<UserModel>> GerListOfEntities()
@@ -36,7 +46,9 @@ public class UserService
 
     public async Task CreateEntity(UserModelRegistrationDto userMapped)
     {
+        userMapped.Password =  PBKDF2HashHelper.CreatePasswordHash(userMapped.Password);
         var user = _mapper.Map<UserModel>(userMapped);
+        
         _unitOfWork.UserRepository.PostEntity(user);
         await _unitOfWork.SaveAsync();
     }

@@ -21,7 +21,7 @@ namespace SweaterV1.Domain.Models
     {
         [Required]
         public string Login { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Password id required.")]
         public string Password { get; set; }
         [Required]
         [EmailAddress]

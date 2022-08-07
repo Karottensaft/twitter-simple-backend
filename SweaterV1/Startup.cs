@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Data;
 using SweaterV1.Infrastructure.Repositories;
+using SweaterV1.Services.HelpingServices;
 using SweaterV1.Services.Services;
 using SweaterV1.Services.Mapper;
 
@@ -59,6 +60,7 @@ public class Startup
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        services.AddScoped<TokenHelper>();
         services.AddScoped<UserRepository>();
         services.AddScoped<PostRepository>();
         services.AddScoped<CommentRepository>();

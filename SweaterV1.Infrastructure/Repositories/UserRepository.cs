@@ -13,9 +13,9 @@ namespace SweaterV1.Infrastructure.Repositories
             this._db = db;
         }
 
-        public async Task<UserModel> LoginAsync(string login, string password)
+        public async Task<UserModel> LoginAsync(string login)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Login.ToLower() == login && x.Password.ToLower() == password);
+            var user = await _db.Users.FirstOrDefaultAsync(x => x.Login == login);// && x.Password.ToLower() == password);
             return user;
         }
 
