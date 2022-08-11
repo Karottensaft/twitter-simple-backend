@@ -2,75 +2,67 @@
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Data;
 
-namespace SweaterV1.Infrastructure.Repositories
+namespace SweaterV1.Infrastructure.Repositories;
+
+public class UserRepository : IRepository<UserModel>
 {
-    public class UserRepository : IRepository<UserModel>
+    private readonly SweaterDbContext _db;
+
+    private bool _disposed;
+
+    public UserRepository(SweaterDbContext db)
     {
-        private readonly SweaterDbContext _db;
+        _db = db;
+    }
 
-        public UserRepository(SweaterDbContext db)
-        {
-            _db = db;
-        }
+    public async Task<IEnumerable<UserModel>> GetEntityListAsync()
+    {
+        return await _db.Users.ToListAsync();
+    }
 
-        public async Task<IEnumerable<UserModel>> GetEntityListAsync()
-        {
-            return await _db.Users.ToListAsync();
-        }
-        public async Task<UserModel> GetEntityByUsernameAsync(string username)
-        {
-            var user = await _db.Users.SingleOrDefaultAsync(x => x.Username == username);
-            return user;
-        }
+    public async Task<UserModel> GetEntityByIdAsync(int userId)
+    {
+        var user = await _db.Users.SingleOrDefaultAsync(x => x.UserId == userId);
+        if (user == null)
+            throw new ArgumentNullException(nameof(user), "User was null");
+        return user;
+    }
 
-        public async Task<UserModel> GetEntityByIdAsync(int userId)
-        {
-            var user = await _db.Users.SingleOrDefaultAsync(x => x.UserId == userId);
-            if (user == null)
-            {
-                throw new Exception("User doesn't exist.");
-            }
-            return user;
-        }
+    public void PostEntity(UserModel user)
+    {
+        _db.Users.Add(user);
+    }
 
-        public void PostEntity(UserModel user)
-        {
-            _db.Users.Add(user);
-        }
+    public void UpdateEntity(UserModel user)
+    {
+        _db.Entry(user).State = EntityState.Modified;
+    }
 
-        public void DeleteEntity(int userId)
-        {
-            var user = _db.Users.Find(userId);
-            if (user == null)
-            {
-                throw new Exception("User doesn't exist.");
-            }
-            _db.Users.Remove(user);
-        }
+    public void DeleteEntity(int userId)
+    {
+        var user = _db.Users.Find(userId);
+        if (user == null)
+            throw new ArgumentNullException(nameof(user), "User was null");
+        _db.Users.Remove(user);
+    }
 
-        public void UpdateEntity(UserModel user)
-        {
-            _db.Entry(user).State = EntityState.Modified;
-        }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        private bool _disposed;
+    public async Task<UserModel> GetEntityByUsernameAsync(string username)
+    {
+        var user = await _db.Users.SingleOrDefaultAsync(x => x.Username == username);
+        return user!;
+    }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this._disposed)
-            {
-                if (disposing)
-                {
-                    _db.Dispose();
-                }
-            }
-            this._disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+            if (disposing)
+                _db.Dispose();
+        _disposed = true;
     }
 }

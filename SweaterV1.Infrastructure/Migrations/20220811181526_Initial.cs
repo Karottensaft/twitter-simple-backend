@@ -21,6 +21,7 @@ namespace SweaterV1.Infrastructure.Migrations
                     Mail = table.Column<string>(type: "text", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Role = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -34,7 +35,7 @@ namespace SweaterV1.Infrastructure.Migrations
                 {
                     PostId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PostName = table.Column<string>(type: "text", nullable: true),
+                    PostName = table.Column<string>(type: "text", nullable: false),
                     Containment = table.Column<string>(type: "text", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false)

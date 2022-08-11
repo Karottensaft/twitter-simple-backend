@@ -32,12 +32,12 @@ public class Startup
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = AuthOptions.ISSUER,
+                    ValidIssuer = AuthOptions.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = AuthOptions.AUDIENCE,
+                    ValidAudience = AuthOptions.Audience,
                     ValidateLifetime = true,
                     IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                    ValidateIssuerSigningKey = true,
+                    ValidateIssuerSigningKey = true
                 };
             });
         services.AddSwaggerGen(opt =>
@@ -59,16 +59,17 @@ public class Startup
                     {
                         Reference = new OpenApiReference
                         {
-                            Type=ReferenceType.SecurityScheme,
-                            Id="Bearer"
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
                         }
                     },
-                    new string[]{}
+                    Array.Empty<string>()
                 }
             });
         });
         services.AddControllersWithViews();
-        services.AddAutoMapper(typeof(UserLoginProfile), typeof(UserRegistrationProfile), typeof(UserInformationProfile), typeof(UserChangeProfile),
+        services.AddAutoMapper(typeof(UserLoginProfile), typeof(UserRegistrationProfile),
+            typeof(UserInformationProfile), typeof(UserChangeProfile),
             typeof(PostInformationProfile), typeof(PostChangeProfile), typeof(PostCreationProfile),
             typeof(CommentInformationProfile), typeof(CommentChangeProfile), typeof(CommentCreateProfile)
             , typeof(LikeInformationProfile), typeof(LikeCreateProfile));
@@ -99,6 +100,7 @@ public class Startup
             app.UseSwaggerUI();
             app.UseDeveloperExceptionPage();
         }
+
         app.ConfigureExceptionHandler(logger);
         app.UseHttpsRedirection();
         app.UseStaticFiles();
@@ -106,9 +108,6 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
     }
 }

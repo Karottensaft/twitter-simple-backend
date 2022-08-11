@@ -1,13 +1,14 @@
-﻿using SweaterV1.Domain.Models;
+﻿using AutoMapper;
+using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Repositories;
-using AutoMapper;
 using SweaterV1.Services.Extensions;
 
 namespace SweaterV1.Services.Services;
+
 public class UserService
 {
-    private readonly UnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly UnitOfWork _unitOfWork;
 
     public UserService(UnitOfWork unitOfWork, IMapper mapper)
     {
@@ -15,18 +16,13 @@ public class UserService
         _mapper = mapper;
     }
 
-    public async Task<UserModelLoginDto> ValidateLogIn(UserModelAutentificationDto data)
+    public async Task<UserModelLoginDto> ValidateLogIn(UserModelAuthDto data)
     {
         var user = await _unitOfWork.UserRepository.GetEntityByUsernameAsync(data.Username);
-        
-        if (PBKDF2HashMiddleware.VerifyPassword(data.Password, user.Password))
-        {
+        if (user == null) throw new InvalidDataException("Wrong username or password");
+        if (Pbkdf2HashMiddleware.VerifyPassword(data.Password, user.Password))
             return _mapper.Map<UserModelLoginDto>(user);
-        }
-        else
-        {
-            throw new Exception("Wrong username or password");
-        }
+        throw new InvalidDataException("Wrong username or password");
     }
 
     public async Task<IEnumerable<UserModel>> GerListOfEntities()
@@ -44,21 +40,23 @@ public class UserService
     {
         var userToValidate = await _unitOfWork.UserRepository.GetEntityByUsernameAsync(userMapped.Username);
 
-        if (userToValidate != null)
+        if (userToValidate == null)
         {
-            throw new Exception("User already exist");
+            userMapped.Password = Pbkdf2HashMiddleware.CreatePasswordHash(userMapped.Password);
+            var user = _mapper.Map<UserModel>(userMapped);
+            _unitOfWork.UserRepository.PostEntity(user);
+            await _unitOfWork.SaveAsync();
         }
-
-        userMapped.Password = PBKDF2HashMiddleware.CreatePasswordHash(userMapped.Password);
-        var user = _mapper.Map<UserModel>(userMapped);
-        _unitOfWork.UserRepository.PostEntity(user);
-        await _unitOfWork.SaveAsync();
+        else
+        {
+            throw new ArgumentException("User already exist.");
+        }
     }
 
     public async Task UpdateEntity(UserModelChangeDto userDto, int id)
     {
         var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(id);
-        userDto.Password = PBKDF2HashMiddleware.CreatePasswordHash(userDto.Password);
+        userDto.Password = Pbkdf2HashMiddleware.CreatePasswordHash(userDto.Password);
         _mapper.Map(userDto, user);
         await _unitOfWork.SaveAsync();
     }

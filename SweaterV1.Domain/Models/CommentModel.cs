@@ -1,22 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SweaterV1.Domain.Models
+namespace SweaterV1.Domain.Models;
+
+public class CommentModel
 {
-    public class CommentModel
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CommentId { get; set; }
-        public string CommentContainment { get; set; }
-        public DateTime CreationDate { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int CommentId { get; set; }
 
-        [ForeignKey("UserModel")]
-        public int UserId { get; set; }
-        public UserModel User { get; set; }
+    public string CommentContainment { get; set; } = string.Empty;
+    public DateTime CreationDate { get; set; } = new();
 
-        [ForeignKey("PostModel")]
-        public int PostId { get; set; }
-        public PostModel Post { get; set; }
-    }
+    [ForeignKey("UserModel")] public int UserId { get; set; }
+
+    public UserModel User { get; set; }
+
+    [ForeignKey("PostModel")] public int PostId { get; set; }
+
+    public PostModel Post { get; set; }
 }

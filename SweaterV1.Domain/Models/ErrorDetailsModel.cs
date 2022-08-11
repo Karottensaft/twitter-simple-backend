@@ -1,13 +1,14 @@
 ﻿using System.Text.Json;
-namespace SweaterV1.Domain.Models
+
+namespace SweaterV1.Domain.Models;
+
+public class ErrorDetailsModel
 {
-    public class ErrorDetails
+    public int StatusCode { get; set; }
+    public string Message { get; set; } = string.Empty;
+
+    public override string ToString()
     {
-        public int StatusCode { get; set; }
-        public string Message { get; set; }
-        public override string ToString()
-        {
-            return JsonSerializer.Serialize(this);
-        }
+        return JsonSerializer.Serialize(this);
     }
 }

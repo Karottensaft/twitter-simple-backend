@@ -1,100 +1,100 @@
 ﻿using AutoMapper;
 using SweaterV1.Domain.Models;
 
-namespace SweaterV1.Services.Mapper
+namespace SweaterV1.Services.Mapper;
+
+public class UserLoginProfile : Profile
 {
-    public class UserLoginProfile : Profile
+    public UserLoginProfile()
     {
-        public UserLoginProfile()
-        {
-            CreateMap<UserModel, UserModelLoginDto>();
-        }
+        CreateMap<UserModel, UserModelLoginDto>();
     }
+}
 
-    public class UserRegistrationProfile : Profile
+public class UserRegistrationProfile : Profile
+{
+    public UserRegistrationProfile()
     {
-        public UserRegistrationProfile()
-        {
-            CreateMap< UserModelRegistrationDto, UserModel>();
-        }
+        CreateMap<UserModelRegistrationDto, UserModel>();
     }
+}
 
-    public class UserInformationProfile : Profile
+public class UserInformationProfile : Profile
+{
+    public UserInformationProfile()
     {
-        public UserInformationProfile()
-        {
-            CreateMap<UserModel, UserModelInformationDto>();
-        }
+        CreateMap<UserModel, UserModelInformationDto>();
     }
+}
 
-    public class UserChangeProfile : Profile
+public class UserChangeProfile : Profile
+{
+    public UserChangeProfile()
     {
-        public UserChangeProfile()
-        {
-            CreateMap<UserModelChangeDto, UserModel>();
-        }
+        CreateMap<UserModelChangeDto, UserModel>();
     }
+}
 
-    public class PostCreationProfile : Profile
+public class PostCreationProfile : Profile
+{
+    public PostCreationProfile()
     {
-        public PostCreationProfile()
-        {
-            CreateMap<PostModelCreationDto, PostModel>();
-        }
+        CreateMap<PostModelCreationDto, PostModel>();
     }
+}
 
-    public class PostInformationProfile : Profile
+public class PostInformationProfile : Profile
+{
+    public PostInformationProfile()
     {
-        public PostInformationProfile()
-        {
+        CreateMap<PostModel, PostModelInformationDto>();
+    }
+}
 
-            CreateMap<PostModel, PostModelInformationDto>();
-        }
+public class PostChangeProfile : Profile
+{
+    public PostChangeProfile()
+    {
+        CreateMap<PostModelChangeDto, PostModel>();
     }
+}
 
-    public class PostChangeProfile : Profile
+public class CommentInformationProfile : Profile
+{
+    public CommentInformationProfile()
     {
-        public PostChangeProfile()
-        {
-            CreateMap<PostModelChangeDto, PostModel>();
-        }
+        CreateMap<CommentModel, CommentModelInformationDto>();
     }
+}
 
-    public class CommentInformationProfile : Profile
+public class CommentCreateProfile : Profile
+{
+    public CommentCreateProfile()
     {
-        public CommentInformationProfile()
-        {
-            CreateMap<CommentModel, CommentModelInformationDto>();
-        }
+        CreateMap<CommentModelCreationDto, CommentModel>();
     }
-    public class CommentCreateProfile : Profile
-    {
-        public CommentCreateProfile()
-        {
-            CreateMap<CommentModelCreationDto, CommentModel>();
-        }
-    }
-    public class CommentChangeProfile : Profile
-    {
-        public CommentChangeProfile()
-        {
-            CreateMap<CommentModelChangeDto, CommentModel>();
-        }
-    }
+}
 
-    public class LikeInformationProfile : Profile
+public class CommentChangeProfile : Profile
+{
+    public CommentChangeProfile()
     {
-        public LikeInformationProfile()
-        {
-            CreateMap<LikeModel, LikeModelInformationDto>();
-        }
+        CreateMap<CommentModelChangeDto, CommentModel>();
     }
+}
 
-    public class LikeCreateProfile : Profile
+public class LikeInformationProfile : Profile
+{
+    public LikeInformationProfile()
     {
-        public LikeCreateProfile()
-        {
-            CreateMap<LikeModelCreationDto, LikeModel>();
-        }
+        CreateMap<LikeModel, LikeModelInformationDto>();
+    }
+}
+
+public class LikeCreateProfile : Profile
+{
+    public LikeCreateProfile()
+    {
+        CreateMap<LikeModelCreationDto, LikeModel>();
     }
 }

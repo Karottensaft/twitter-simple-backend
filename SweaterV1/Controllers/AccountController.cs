@@ -15,13 +15,10 @@ public class AccountController : Controller
     }
 
     [HttpPost("user/token")]
-    public async Task<TokenModel> Token(UserModelAutentificationDto data)
+    public async Task<TokenModel> Token(UserModelAuthDto data)
     {
         var response = await _tokenHelper.GetToken(data);
-        if (response == null)
-        {
-            throw new Exception("");
-        }
+        if (response == null) throw new Exception("");
         return response;
     }
 }

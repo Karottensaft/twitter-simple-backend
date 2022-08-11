@@ -94,6 +94,7 @@ namespace SweaterV1.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PostName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("UserId")
@@ -113,6 +114,9 @@ namespace SweaterV1.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

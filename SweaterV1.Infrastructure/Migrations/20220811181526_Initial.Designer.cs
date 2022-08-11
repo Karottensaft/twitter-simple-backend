@@ -12,7 +12,7 @@ using SweaterV1.Infrastructure.Data;
 namespace SweaterV1.Infrastructure.Migrations
 {
     [DbContext(typeof(SweaterDbContext))]
-    [Migration("20220809154609_Initial")]
+    [Migration("20220811181526_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,6 +96,7 @@ namespace SweaterV1.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PostName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("UserId")
@@ -115,6 +116,9 @@ namespace SweaterV1.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

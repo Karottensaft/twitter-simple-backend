@@ -49,4 +49,10 @@ public class CommentController : ControllerBase
     {
         await _commentService.DeleteEntity(commentId);
     }
+
+    [HttpDelete("comment/{postId}/delete-all")]
+    public async Task DeleteAllEntities(int postId)
+    {
+        await _commentService.DeleteAllEntities(postId);
+    }
 }

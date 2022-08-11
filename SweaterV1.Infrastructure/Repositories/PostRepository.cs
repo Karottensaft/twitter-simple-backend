@@ -2,76 +2,69 @@
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Data;
 
-namespace SweaterV1.Infrastructure.Repositories
+namespace SweaterV1.Infrastructure.Repositories;
+
+public class PostRepository : IRepository<PostModel>
 {
-    public class PostRepository : IRepository<PostModel>
+    private readonly SweaterDbContext _db;
+
+
+    private bool _disposed;
+
+    public PostRepository(SweaterDbContext db)
     {
-        private readonly SweaterDbContext _db;
+        _db = db;
+    }
 
-        public PostRepository(SweaterDbContext db)
-        {
-            _db = db;
-        }
+    public async Task<IEnumerable<PostModel>> GetEntityListAsync()
+    {
+        return await _db.Posts.ToListAsync();
+    }
 
-        public async Task<IEnumerable<PostModel>> GetEntityListAsync()
-        {
-            return await _db.Posts.ToListAsync();
-        }
-
-        public async Task<IEnumerable<PostModel>> GetEntityListAsyncByUserId(int userId)
-        {
-            return  await _db.Posts.Where(x => x.UserId == userId).ToListAsync();
-            
-        }
-        public async Task<PostModel> GetEntityByIdAsync(int postId)
-        {
-            var post =  await _db.Posts.SingleOrDefaultAsync(x => x.PostId == postId);
-            if (post == null)
-            {
-                throw new Exception("Post doesn't exist.");
-            }
-            return post;
-        }
-
-        public void PostEntity(PostModel post)
-        {
-            _db.Posts.Add(post);
-        }
-
-        public void DeleteEntity(int postId)
-        {
-            var post = _db.Posts.Find(postId);
-            if (post == null)
-            {
-                throw new Exception("Post doesn't exist.");
-            }
-            _db.Posts.Remove(post);
-        }
-
-        public void UpdateEntity(PostModel post)
-        {
-            _db.Entry(post).State = EntityState.Modified;
-        }
+    public async Task<PostModel> GetEntityByIdAsync(int postId)
+    {
+        var post = await _db.Posts.SingleOrDefaultAsync(x => x.PostId == postId);
+        if (post == null)
+            throw new ArgumentNullException(nameof(post), "Post was null");
+        return post;
+    }
 
 
-        private bool _disposed;
+    public void PostEntity(PostModel post)
+    {
+        _db.Posts.Add(post);
+    }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this._disposed)
-            {
-                if (disposing)
-                {
-                    _db.Dispose();
-                }
-            }
-            this._disposed = true;
-        }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+    public void UpdateEntity(PostModel post)
+    {
+        _db.Entry(post).State = EntityState.Modified;
+    }
+
+    public void DeleteEntity(int postId)
+    {
+        var post = _db.Posts.Find(postId);
+        if (post == null)
+            throw new ArgumentNullException(nameof(post), "Post was null");
+        _db.Posts.Remove(post);
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    public async Task<IEnumerable<PostModel>> GetEntityListAsyncByUserId(int userId)
+    {
+        return await _db.Posts.Where(x => x.UserId == userId).ToListAsync();
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+            if (disposing)
+                _db.Dispose();
+        _disposed = true;
     }
 }

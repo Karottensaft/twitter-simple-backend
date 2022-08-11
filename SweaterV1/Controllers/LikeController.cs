@@ -34,4 +34,10 @@ public class LikeController : ControllerBase
     {
         await _likeService.DeleteEntity(likeId);
     }
+
+    [HttpDelete("like/{postId}/delete-all")]
+    public async Task DeleteAllEntities(int postId)
+    {
+        await _likeService.DeleteAllEntities(postId);
+    }
 }

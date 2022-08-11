@@ -1,66 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace SweaterV1.Domain.Models
+namespace SweaterV1.Domain.Models;
+
+public class UserModelLoginDto
 {
-    public class UserModelLoginDto
-    {
-        public int UserId { get; set; }
+    public int UserId { get; set; }
 
-        [Required]
-        public string Username { get; set; }
+    [Required] public string Username { get; set; } = string.Empty;
 
-        [Required]
-        public string Password { get; set; }
+    [Required] public string Password { get; set; } = string.Empty;
 
-        public string Role { get; set; }
-    }
+    public string Role { get; set; } = string.Empty;
+}
 
-    public class UserModelRegistrationDto
-    {
-        [ConcurrencyCheck]
-        [Required]
-        public string Username { get; set; }
+public class UserModelRegistrationDto
+{
+    [ConcurrencyCheck] [Required] public string Username { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Password id required.")]
-        public string Password { get; set; }
+    [Required] public string Password { get; set; } = string.Empty;
 
-        [Required]
-        [EmailAddress]
-        public string Mail { get; set; }
-        [Required]
-        public string FirstName { get; set; }
-        [Required]
-        public string LastName { get; set; }
-    }
+    [Required] [EmailAddress] public string Mail { get; set; } = string.Empty;
 
-    public class UserModelInformationDto
-    {
-        public string Username { get; set; }
-        public string Mail { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+    [Required] public string FirstName { get; set; } = string.Empty;
 
-        public List<PostModel> Posts { get; set; }
+    [Required] public string LastName { get; set; } = string.Empty;
+}
 
-    }
+public class UserModelInformationDto
+{
+    public string Username { get; set; } = string.Empty;
+    public string Mail { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
 
-    public class UserModelChangeDto
-    {
-        public string Password { get; set; }
-        public string Mail { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-    }
+    public List<PostModel> Posts { get; set; } = new();
+}
 
-    public class UserModelAutentificationDto
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
+public class UserModelChangeDto
+{
+    public string Password { get; set; } = string.Empty;
+    public string Mail { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+}
+
+public class UserModelAuthDto
+{
+    public string Username { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 }

@@ -26,7 +26,6 @@ public class UserController : ControllerBase
     [HttpGet("user/{userId}")]
     public async Task<UserModelInformationDto> GetUserAsync(int userId)
     {
-        
         var user = await _userService.GetEntity(userId);
         return user;
     }

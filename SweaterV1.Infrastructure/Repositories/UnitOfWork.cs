@@ -1,65 +1,47 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SweaterV1.Infrastructure.Data;
 
-namespace SweaterV1.Infrastructure.Repositories
+namespace SweaterV1.Infrastructure.Repositories;
+
+public class UnitOfWork : IDisposable
 {
-    public class UnitOfWork : IDisposable
+    private readonly SweaterDbContext _db;
+
+    private bool _disposed;
+
+    public UnitOfWork(DbContextOptions<SweaterDbContext> options)
     {
-        private readonly SweaterDbContext _db;
+        _db = new SweaterDbContext(options);
+        UserRepository = new UserRepository(_db);
+        PostRepository = new PostRepository(_db);
+        CommentRepository = new CommentRepository(_db);
+        LikeRepository = new LikeRepository(_db);
+    }
 
-        public UnitOfWork(DbContextOptions<SweaterDbContext> options)
-        {
-            _db = new SweaterDbContext(options);
-            UserRepository = new UserRepository(_db);
-            PostRepository = new PostRepository(_db);
-            CommentRepository = new CommentRepository(_db);
-            LikeRepository = new LikeRepository(_db);
-        }
-        public UserRepository UserRepository
-        {
-            get;
+    public UserRepository UserRepository { get; }
 
-        }
+    public PostRepository PostRepository { get; }
 
-        public PostRepository PostRepository
-        {
-            get;
+    public CommentRepository CommentRepository { get; }
 
-        }
-        public CommentRepository CommentRepository
-        {
-            get;
+    public LikeRepository LikeRepository { get; }
 
-        }
-        public LikeRepository LikeRepository
-        {
-            get;
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        }
+    public async Task SaveAsync()
+    {
+        await _db.SaveChangesAsync();
+    }
 
-        public async Task SaveAsync()
-        {
-            await _db.SaveChangesAsync();
-        }
-
-        private bool _disposed;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this._disposed)
-            {
-                if (disposing)
-                {
-                    _db.Dispose();
-                }
-            }
-            this._disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+            if (disposing)
+                _db.Dispose();
+        _disposed = true;
     }
 }
