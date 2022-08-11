@@ -1,12 +1,9 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using SweaterV1.Domain.Models;
+﻿using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Repositories;
 using AutoMapper;
-using SweaterV1.Services.Services;
-using SweaterV1.Services.HelpingServices;
+using SweaterV1.Services.Extensions;
 
 namespace SweaterV1.Services.Services;
-
 public class UserService
 {
     private readonly UnitOfWork _unitOfWork;
@@ -18,18 +15,17 @@ public class UserService
         _mapper = mapper;
     }
 
-    public async Task<UserModelLoginDto> LoginAsync(string login, string password)
+    public async Task<UserModelLoginDto> ValidateLogIn(UserModelAutentificationDto data)
     {
-        //password = PBKDF2HashHelper.CreatePasswordHash(password);
-        var user = await _unitOfWork.UserRepository.LoginAsync(login);
+        var user = await _unitOfWork.UserRepository.GetEntityByUsernameAsync(data.Username);
         
-        if (PBKDF2HashHelper.VerifyPassword(password, user.Password))
+        if (PBKDF2HashMiddleware.VerifyPassword(data.Password, user.Password))
         {
             return _mapper.Map<UserModelLoginDto>(user);
         }
         else
         {
-            return null;
+            throw new Exception("Wrong username or password");
         }
     }
 
@@ -46,9 +42,15 @@ public class UserService
 
     public async Task CreateEntity(UserModelRegistrationDto userMapped)
     {
-        userMapped.Password =  PBKDF2HashHelper.CreatePasswordHash(userMapped.Password);
+        var userToValidate = await _unitOfWork.UserRepository.GetEntityByUsernameAsync(userMapped.Username);
+
+        if (userToValidate != null)
+        {
+            throw new Exception("User already exist");
+        }
+
+        userMapped.Password = PBKDF2HashMiddleware.CreatePasswordHash(userMapped.Password);
         var user = _mapper.Map<UserModel>(userMapped);
-        
         _unitOfWork.UserRepository.PostEntity(user);
         await _unitOfWork.SaveAsync();
     }
@@ -56,7 +58,8 @@ public class UserService
     public async Task UpdateEntity(UserModelChangeDto userDto, int id)
     {
         var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(id);
-        _mapper.Map<UserModelChangeDto, UserModel>(userDto, user);
+        userDto.Password = PBKDF2HashMiddleware.CreatePasswordHash(userDto.Password);
+        _mapper.Map(userDto, user);
         await _unitOfWork.SaveAsync();
     }
 

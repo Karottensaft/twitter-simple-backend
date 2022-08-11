@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
 using SweaterV1.Services.Services;
 
-namespace SweaterV1.Controllers;
+namespace SweaterV1.WebAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
 public class UserController : ControllerBase
 {
     private readonly UserService _userService;
@@ -17,42 +16,40 @@ public class UserController : ControllerBase
     }
 
     [Authorize(Roles = "admin")]
-    [HttpGet("users")]
-    public async Task<IEnumerable<UserModel>> GetListAsync()
+    [HttpGet("user/all")]
+    public async Task<IEnumerable<UserModel>> GetListOfUsersAsync()
     {
         var user = await _userService.GerListOfEntities();
         return user;
     }
 
-    [HttpGet("user/{id}")]
-    public async Task<UserModelInformationDto> GetAsync(int id)
+    [HttpGet("user/{userId}")]
+    public async Task<UserModelInformationDto> GetUserAsync(int userId)
     {
-
-        var user = await _userService.GetEntity(id);
-        return user!;
+        
+        var user = await _userService.GetEntity(userId);
+        return user;
     }
 
-    [HttpPost("registration")]
-    public async Task<UserModelRegistrationDto> Post(UserModelRegistrationDto user)
+    [HttpPost("user/registration")]
+    public async Task<UserModelRegistrationDto> PostUser(UserModelRegistrationDto user)
     {
-
-        if (user == null) BadRequest();
-        await _userService.CreateEntity(user!);
-        return user!;
-    }
-
-    [Authorize]
-    [HttpPut("user/{id}/user-settings")]
-    public async Task<UserModelChangeDto> Put(UserModelChangeDto user, int id)
-    {
-        await _userService.UpdateEntity(user, id);
+        await _userService.CreateEntity(user);
         return user;
     }
 
     [Authorize]
-    [HttpDelete("user/{id}/deleter")]
-    public async Task Delete(int id)
+    [HttpPut("user/{userId}/user-settings")]
+    public async Task<UserModelChangeDto> PutUser(UserModelChangeDto user, int userId)
     {
-        await _userService.DeleteEntity(id);
+        await _userService.UpdateEntity(user, userId);
+        return user;
+    }
+
+    [Authorize(Roles = "admin")]
+    [HttpDelete("user/{userId}/delete")]
+    public async Task DeleteUser(int userId)
+    {
+        await _userService.DeleteEntity(userId);
     }
 }

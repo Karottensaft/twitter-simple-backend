@@ -10,19 +10,19 @@ namespace SweaterV1.Domain.Models
 {
     public class CommentModelInformationDto
     {
-        public string CommentText { get; set; }
-        public DateTime CreatonDate { get; set; }
+        public string CommentContainment { get; set; }
+        public DateTime CreationDate { get; set; }
         public int UserId { get; set; }
         public int PostId { get; set; }
     }
     public class CommentModelCreationDto
     {
-        public string CommentText { get; set; }
+        public string CommentContainment { get; set; }
         public int UserId { get; set; }
         public int PostId { get; set; }
     }
     public class CommentModelChangeDto
     {
-        public string CommentText { get; set; }
+        public string CommentContainment { get; set; }
     }
 }

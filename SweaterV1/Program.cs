@@ -13,6 +13,5 @@ namespace SweaterV1.WebAPI
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
     }
 }

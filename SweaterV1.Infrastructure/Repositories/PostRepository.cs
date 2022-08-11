@@ -4,13 +4,13 @@ using SweaterV1.Infrastructure.Data;
 
 namespace SweaterV1.Infrastructure.Repositories
 {
-    public class PostRepository : IRepository<PostModel>, IDisposable
+    public class PostRepository : IRepository<PostModel>
     {
         private readonly SweaterDbContext _db;
 
         public PostRepository(SweaterDbContext db)
         {
-            this._db = db;
+            _db = db;
         }
 
         public async Task<IEnumerable<PostModel>> GetEntityListAsync()
@@ -23,9 +23,14 @@ namespace SweaterV1.Infrastructure.Repositories
             return  await _db.Posts.Where(x => x.UserId == userId).ToListAsync();
             
         }
-        public async Task<PostModel> GetEntityByIdAsync(int id)
+        public async Task<PostModel> GetEntityByIdAsync(int postId)
         {
-            return await _db.Posts.FindAsync(id);
+            var post =  await _db.Posts.SingleOrDefaultAsync(x => x.PostId == postId);
+            if (post == null)
+            {
+                throw new Exception("Post doesn't exist.");
+            }
+            return post;
         }
 
         public void PostEntity(PostModel post)
@@ -35,7 +40,11 @@ namespace SweaterV1.Infrastructure.Repositories
 
         public void DeleteEntity(int postId)
         {
-            PostModel post = _db.Posts.Find(postId);
+            var post = _db.Posts.Find(postId);
+            if (post == null)
+            {
+                throw new Exception("Post doesn't exist.");
+            }
             _db.Posts.Remove(post);
         }
 
@@ -45,7 +54,7 @@ namespace SweaterV1.Infrastructure.Repositories
         }
 
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         protected virtual void Dispose(bool disposing)
         {

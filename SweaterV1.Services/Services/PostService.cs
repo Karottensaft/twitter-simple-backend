@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using SweaterV1.Domain.Models;
-using SweaterV1.Infrastructure.Data;
 using SweaterV1.Infrastructure.Repositories;
 
 
@@ -44,7 +43,7 @@ namespace SweaterV1.Services.Services
         public async Task UpdateEntity(PostModelChangeDto postDto, int id)
         {
             var post = await _unitOfWork.PostRepository.GetEntityByIdAsync(id);
-            _mapper.Map<PostModelChangeDto, PostModel>(postDto, post);
+            _mapper.Map(postDto, post);
             await _unitOfWork.SaveAsync();
         }
 

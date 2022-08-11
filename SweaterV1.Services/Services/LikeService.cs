@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using AutoMapper;
+﻿using AutoMapper;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Repositories;
 

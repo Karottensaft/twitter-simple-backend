@@ -1,14 +1,14 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SweaterV1.Domain.Models;
+using Microsoft.OpenApi.Models;
+using NLog;
 using SweaterV1.Infrastructure.Data;
 using SweaterV1.Infrastructure.Repositories;
-using SweaterV1.Services.HelpingServices;
+using SweaterV1.Services.Extensions;
 using SweaterV1.Services.Services;
 using SweaterV1.Services.Mapper;
+using SweaterV1.Services.Options;
 
 namespace SweaterV1.WebAPI;
 
@@ -16,38 +16,57 @@ public class Startup
 {
     public Startup(IConfiguration configuration)
     {
+        LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
         Configuration = configuration;
     }
 
     public IConfiguration Configuration { get; }
 
-
     public void ConfigureServices(IServiceCollection services)
     {
+        services.AddSingleton<ILoggerManager, LoggerManager>();
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    // укзывает, будет ли валидироваться издатель при валидации токена
                     ValidateIssuer = true,
-                    // строка, представляющая издателя
                     ValidIssuer = AuthOptions.ISSUER,
-
-                    // будет ли валидироваться потребитель токена
                     ValidateAudience = true,
-                    // установка потребителя токена
                     ValidAudience = AuthOptions.AUDIENCE,
-                    // будет ли валидироваться время существования
                     ValidateLifetime = true,
-
-                    // установка ключа безопасности
                     IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                    // валидация ключа безопасности
                     ValidateIssuerSigningKey = true,
                 };
             });
+        services.AddSwaggerGen(opt =>
+        {
+            opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
+            opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter token",
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
+                Scheme = "bearer"
+            });
+            opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type=ReferenceType.SecurityScheme,
+                            Id="Bearer"
+                        }
+                    },
+                    new string[]{}
+                }
+            });
+        });
         services.AddControllersWithViews();
         services.AddAutoMapper(typeof(UserLoginProfile), typeof(UserRegistrationProfile), typeof(UserInformationProfile), typeof(UserChangeProfile),
             typeof(PostInformationProfile), typeof(PostChangeProfile), typeof(PostCreationProfile),
@@ -60,7 +79,7 @@ public class Startup
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddScoped<TokenHelper>();
+        services.AddScoped<TokenMiddleware>();
         services.AddScoped<UserRepository>();
         services.AddScoped<PostRepository>();
         services.AddScoped<CommentRepository>();
@@ -72,7 +91,7 @@ public class Startup
         services.AddScoped<LikeService>();
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
     {
         if (env.IsDevelopment())
         {
@@ -80,19 +99,16 @@ public class Startup
             app.UseSwaggerUI();
             app.UseDeveloperExceptionPage();
         }
-
-
+        app.ConfigureExceptionHandler(logger);
         app.UseHttpsRedirection();
         app.UseStaticFiles();
-
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers(); 
-
+            endpoints.MapControllers();
         });
     }
 }

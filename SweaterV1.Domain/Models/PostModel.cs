@@ -10,10 +10,10 @@ namespace SweaterV1.Domain.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PostId { get; set; }
-        public string? Name { get; set; }
-        public string Contaiment { get; set; }
+        public string? PostName { get; set; }
+        public string Containment { get; set; }
 
-        public DateTime CreatonDate { get; set; }
+        public DateTime CreationDate { get; set; }
         [ForeignKey("UserModel")]
         public int UserId { get; set; }
 

@@ -30,11 +30,11 @@ namespace SweaterV1.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CommentId"));
 
-                    b.Property<string>("CommentText")
+                    b.Property<string>("CommentContainment")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatonDate")
+                    b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("PostId")
@@ -60,7 +60,7 @@ namespace SweaterV1.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("LikeId"));
 
-                    b.Property<DateTime>("CreatonDate")
+                    b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("PostId")
@@ -86,14 +86,14 @@ namespace SweaterV1.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PostId"));
 
-                    b.Property<string>("Contaiment")
+                    b.Property<string>("Containment")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatonDate")
+                    b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("PostName")
                         .HasColumnType("text");
 
                     b.Property<int>("UserId")
@@ -122,10 +122,6 @@ namespace SweaterV1.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Mail")
                         .IsRequired()
                         .HasColumnType("text");
@@ -135,6 +131,10 @@ namespace SweaterV1.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
 

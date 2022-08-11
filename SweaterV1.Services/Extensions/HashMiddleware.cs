@@ -1,23 +1,23 @@
 ﻿using System.Security.Cryptography;
 
-namespace SweaterV1.Services.HelpingServices
+namespace SweaterV1.Services.Extensions
 {
 
-    static class PBKDF2HashHelper
+    static class PBKDF2HashMiddleware
     {
-        private const int SALT_LENGTH = 24;
-        private const int DERIVED_KEY_LENGTH = 24;
+        private const int SaltLength = 24;
+        private const int DerivedKeyLength = 24;
 
         public static string CreatePasswordHash(string password, int iterationCount = 15013)
         {
             if (password == null) throw new ArgumentNullException(nameof(password));
 
-            byte[] salt = GenerateRandomSalt(SALT_LENGTH);
+            byte[] salt = GenerateRandomSalt(SaltLength);
             byte[] hashValue = GenerateHashValue(password, salt, iterationCount);
             byte[] iterationCountByteArr = BitConverter.GetBytes(iterationCount);
-            var valueToSave = new byte[SALT_LENGTH + DERIVED_KEY_LENGTH + iterationCountByteArr.Length];
-            Buffer.BlockCopy(salt, 0, valueToSave, 0, SALT_LENGTH);
-            Buffer.BlockCopy(hashValue, 0, valueToSave, SALT_LENGTH, DERIVED_KEY_LENGTH);
+            var valueToSave = new byte[SaltLength + DerivedKeyLength + iterationCountByteArr.Length];
+            Buffer.BlockCopy(salt, 0, valueToSave, 0, SaltLength);
+            Buffer.BlockCopy(hashValue, 0, valueToSave, SaltLength, DerivedKeyLength);
             Buffer.BlockCopy(iterationCountByteArr, 0, valueToSave, salt.Length + hashValue.Length,
                 iterationCountByteArr.Length);
             return Convert.ToBase64String(valueToSave);
@@ -37,17 +37,17 @@ namespace SweaterV1.Services.HelpingServices
         {
             using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterationCount))
             {
-                return pbkdf2.GetBytes(DERIVED_KEY_LENGTH);
+                return pbkdf2.GetBytes(DerivedKeyLength);
             }
         }
 
         public static bool VerifyPassword(string passwordGuess, string passwordHash)
         {
             //ingredient #1: password salt byte array
-            var salt = new byte[SALT_LENGTH];
+            var salt = new byte[SaltLength];
 
             //ingredient #2: byte array of password
-            var actualPasswordByteArr = new byte[DERIVED_KEY_LENGTH];
+            var actualPasswordByteArr = new byte[DerivedKeyLength];
 
             //convert actualSavedHashResults to byte array
             byte[] actualSavedHashResultsBtyeArr = Convert.FromBase64String(passwordHash);
@@ -56,8 +56,8 @@ namespace SweaterV1.Services.HelpingServices
             int iterationCountLength =
                 actualSavedHashResultsBtyeArr.Length - (salt.Length + actualPasswordByteArr.Length);
             byte[] iterationCountByteArr = new byte[iterationCountLength];
-            Buffer.BlockCopy(actualSavedHashResultsBtyeArr, 0, salt, 0, SALT_LENGTH);
-            Buffer.BlockCopy(actualSavedHashResultsBtyeArr, SALT_LENGTH, actualPasswordByteArr, 0,
+            Buffer.BlockCopy(actualSavedHashResultsBtyeArr, 0, salt, 0, SaltLength);
+            Buffer.BlockCopy(actualSavedHashResultsBtyeArr, SaltLength, actualPasswordByteArr, 0,
                 actualPasswordByteArr.Length);
             Buffer.BlockCopy(actualSavedHashResultsBtyeArr, (salt.Length + actualPasswordByteArr.Length),
                 iterationCountByteArr, 0, iterationCountLength);

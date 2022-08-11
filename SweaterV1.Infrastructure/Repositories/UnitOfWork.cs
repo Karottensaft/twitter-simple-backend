@@ -18,26 +18,22 @@ namespace SweaterV1.Infrastructure.Repositories
         public UserRepository UserRepository
         {
             get;
-            private set;
 
         }
 
         public PostRepository PostRepository
         {
             get;
-            private set;
 
         }
         public CommentRepository CommentRepository
         {
             get;
-            private set;
 
         }
         public LikeRepository LikeRepository
         {
             get;
-            private set;
 
         }
 

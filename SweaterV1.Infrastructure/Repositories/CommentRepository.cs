@@ -4,13 +4,13 @@ using SweaterV1.Infrastructure.Data;
 
 namespace SweaterV1.Infrastructure.Repositories
 {
-    public class CommentRepository : IRepository<CommentModel>, IDisposable
+    public class CommentRepository : IRepository<CommentModel>
     {
         private readonly SweaterDbContext _db;
 
         public CommentRepository(SweaterDbContext db)
         {
-            this._db = db;
+            _db = db;
         }
 
         public async Task<IEnumerable<CommentModel>> GetEntityListAsync()
@@ -18,9 +18,14 @@ namespace SweaterV1.Infrastructure.Repositories
             return await _db.Comments.ToListAsync();
         }
 
-        public async Task<CommentModel> GetEntityByIdAsync(int id)
+        public async Task<CommentModel> GetEntityByIdAsync(int commentId)
         {
-            return await _db.Comments.FindAsync(id);
+            var comment =  await _db.Comments.SingleOrDefaultAsync(x => x.CommentId == commentId);
+            if (comment == null)
+            {
+                throw new Exception("Comment doesn't exist.");
+            }
+            return comment;
         }
 
         public void PostEntity(CommentModel comment)
@@ -30,7 +35,11 @@ namespace SweaterV1.Infrastructure.Repositories
 
         public void DeleteEntity(int commentId)
         {
-            CommentModel comment = _db.Comments.Find(commentId);
+            var comment = _db.Comments.Find(commentId);
+            if (comment == null)
+            {
+                throw new Exception("Comment doesn't exist.");
+            }
             _db.Comments.Remove(comment);
         }
 
@@ -40,7 +49,7 @@ namespace SweaterV1.Infrastructure.Repositories
         }
 
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         protected virtual void Dispose(bool disposing)
         {

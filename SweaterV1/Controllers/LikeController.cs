@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
 using SweaterV1.Services.Services;
 
-namespace SweaterV1.Controllers;
+namespace SweaterV1.WebAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
 public class LikeController : ControllerBase
 {
     private readonly LikeService _likeService;
@@ -17,23 +15,23 @@ public class LikeController : ControllerBase
     }
 
     [HttpGet("post/{postId}/likes")]
-    public async Task<IEnumerable<LikeModelInformationDto>> GetListAsyncByPost(int postId)
+    public async Task<IEnumerable<LikeModelInformationDto>> GetListOfLikesAsyncByPost(int postId)
     {
         var like = await _likeService.GerListOfEntitiesByPost(postId);
         return like;
     }
 
 
-    [HttpPost("post/{id}/like-creator")]
-    public async Task<LikeModelCreationDto> Post(LikeModelCreationDto like)
+    [HttpPost("post/{postId}/like-creator")]
+    public async Task<LikeModelCreationDto> PostLike(LikeModelCreationDto like)
     {
-        await _likeService.CreateEntity(like!);
-        return like!;
+        await _likeService.CreateEntity(like);
+        return like;
     }
 
-    [HttpDelete("like/{id}/deleter")]
-    public async Task Delete(int id)
+    [HttpDelete("like/{likeId}/delete")]
+    public async Task DeleteLike(int likeId)
     {
-        await _likeService.DeleteEntity(id);
+        await _likeService.DeleteEntity(likeId);
     }
 }

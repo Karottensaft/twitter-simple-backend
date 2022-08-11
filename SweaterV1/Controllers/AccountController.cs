@@ -1,31 +1,27 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Construction;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
-using SweaterV1.Services.HelpingServices;
-using SweaterV1.Services.Services;
-using SweaterV1.Services.HelpingServices;
+using SweaterV1.Services.Extensions;
 
-namespace SweaterV1.WebAPI.Controllers
+namespace SweaterV1.WebAPI.Controllers;
+
+[ApiController]
+public class AccountController : Controller
 {
-    public class AccountController : Controller
+    private readonly TokenMiddleware _tokenHelper;
+
+    public AccountController(TokenMiddleware tokenHelper)
     {
-        private readonly UserService _userService;
-        private readonly TokenHelper _tokenHelper;
+        _tokenHelper = tokenHelper;
+    }
 
-        public AccountController(UserService userService, TokenHelper tokenHelper)
+    [HttpPost("user/token")]
+    public async Task<TokenModel> Token(UserModelAutentificationDto data)
+    {
+        var response = await _tokenHelper.GetToken(data);
+        if (response == null)
         {
-            _userService = userService;
-            _tokenHelper = tokenHelper;
+            throw new Exception("");
         }
-
-        [HttpPost("/token")]
-        public async Task<TokenModel> Token(string username, string password)
-        {
-            var response = await _tokenHelper.GetToken(username, password);
-            return response;
-        }
+        return response;
     }
 }

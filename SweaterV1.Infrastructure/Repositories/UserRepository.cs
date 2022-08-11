@@ -10,24 +10,27 @@ namespace SweaterV1.Infrastructure.Repositories
 
         public UserRepository(SweaterDbContext db)
         {
-            this._db = db;
-        }
-
-        public async Task<UserModel> LoginAsync(string login)
-        {
-            var user = await _db.Users.FirstOrDefaultAsync(x => x.Login == login);// && x.Password.ToLower() == password);
-            return user;
+            _db = db;
         }
 
         public async Task<IEnumerable<UserModel>> GetEntityListAsync()
         {
             return await _db.Users.ToListAsync();
         }
-
-        public async Task<UserModel> GetEntityByIdAsync(int id)
+        public async Task<UserModel> GetEntityByUsernameAsync(string username)
         {
-            var user = await _db.Users.FindAsync(id);
-            return user!;
+            var user = await _db.Users.SingleOrDefaultAsync(x => x.Username == username);
+            return user;
+        }
+
+        public async Task<UserModel> GetEntityByIdAsync(int userId)
+        {
+            var user = await _db.Users.SingleOrDefaultAsync(x => x.UserId == userId);
+            if (user == null)
+            {
+                throw new Exception("User doesn't exist.");
+            }
+            return user;
         }
 
         public void PostEntity(UserModel user)
@@ -38,7 +41,11 @@ namespace SweaterV1.Infrastructure.Repositories
         public void DeleteEntity(int userId)
         {
             var user = _db.Users.Find(userId);
-            _db.Users.Remove(user!);
+            if (user == null)
+            {
+                throw new Exception("User doesn't exist.");
+            }
+            _db.Users.Remove(user);
         }
 
         public void UpdateEntity(UserModel user)

@@ -4,13 +4,13 @@ using SweaterV1.Infrastructure.Data;
 
 namespace SweaterV1.Infrastructure.Repositories
 {
-    public class LikeRepository : IRepository<LikeModel>, IDisposable
+    public class LikeRepository : IRepository<LikeModel>
     {
         private readonly SweaterDbContext _db;
 
         public LikeRepository(SweaterDbContext db)
         {
-            this._db = db;
+            _db = db;
         }
 
         public async Task<IEnumerable<LikeModel>> GetEntityListAsync()
@@ -24,9 +24,14 @@ namespace SweaterV1.Infrastructure.Repositories
 
         }
 
-        public async Task<LikeModel> GetEntityByIdAsync(int id)
+        public async Task<LikeModel> GetEntityByIdAsync(int likeId)
         {
-            return await _db.Likes.FindAsync(id);
+            var like = await _db.Likes.SingleOrDefaultAsync(x => x.LikeId == likeId);
+            if (like == null)
+            {
+                throw new Exception("Like doesn't exist.");
+            }
+            return like;
         }
 
         public void PostEntity(LikeModel like)
@@ -36,7 +41,11 @@ namespace SweaterV1.Infrastructure.Repositories
 
         public void DeleteEntity(int likeId)
         {
-            LikeModel like = _db.Likes.Find(likeId);
+            var like = _db.Likes.Find(likeId);
+            if (like == null)
+            {
+                throw new Exception("Like doesn't exist.");
+            }
             _db.Likes.Remove(like);
         }
 
@@ -46,7 +55,7 @@ namespace SweaterV1.Infrastructure.Repositories
         }
 
 
-        private bool _disposed = false;
+        private bool _disposed;
 
         protected virtual void Dispose(bool disposing)
         {

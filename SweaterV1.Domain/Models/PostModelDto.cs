@@ -10,28 +10,27 @@ namespace SweaterV1.Domain.Models
     public class PostModelCreationDto
     {
         [Required]
-        public string Name { get; set; }
+        public string PostName { get; set; }
+
         [Required]
-        public string Contaiment { get; set; }
+        public string Containment { get; set; }
+
         [Required]
-        //public UserModel User { get; set; }
         public int UserId { get; set; }
     }
 
     public class PostModelInformationDto
     {
-        public string Name { get; set; }
-        public string Contaiment { get; set; }
-        public DateTime Created { get; set; }
-
-        //public UserModel User { get; set; }
+        public string PostName { get; set; }
+        public string Containment { get; set; }
+        public DateTime CreationDate { get; set; }
         public int UserId { get; set; }
     }
 
     public class PostModelChangeDto
     {
-        public string Name { get; set; }
-        public string Contaiment { get; set; }
+        public string PostName { get; set; }
+        public string Containment { get; set; }
 
     }
 }
