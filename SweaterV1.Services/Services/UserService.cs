@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Repositories;
 using SweaterV1.Services.Extensions;
@@ -9,14 +10,21 @@ public class UserService
 {
     private readonly IMapper _mapper;
     private readonly UnitOfWork _unitOfWork;
+    private readonly IUserProvider _userProvider;
 
-    public UserService(UnitOfWork unitOfWork, IMapper mapper)
+    public UserService(UnitOfWork unitOfWork, IMapper mapper, IUserProvider userProvider)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _userProvider = userProvider;
     }
 
-    public async Task<UserModelLoginDto> ValidateLogIn(UserModelAuthDto data)
+    public int GetUserId()
+    {
+        var userId = int.Parse(_userProvider.GetUserId());
+        return userId;
+    }
+    public async Task<UserModelLoginDto> ValidateUser(UserModelAuthDto data)
     {
         var user = await _unitOfWork.UserRepository.GetEntityByUsernameAsync(data.Username);
         if (user == null) throw new InvalidDataException("Wrong username or password");
@@ -35,6 +43,13 @@ public class UserService
         var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(id);
         return _mapper.Map<UserModelInformationDto>(user);
     }
+
+    public async Task<UserModelInformationDto> GetEntityByName(string username)
+    {
+        var user = await _unitOfWork.UserRepository.GetEntityByUsernameAsync(username);
+        return _mapper.Map<UserModelInformationDto>(user);
+    }
+
 
     public async Task CreateEntity(UserModelRegistrationDto userMapped)
     {

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
+using SweaterV1.Services.Extensions;
 using SweaterV1.Services.Services;
 
 namespace SweaterV1.WebAPI.Controllers;
@@ -8,11 +9,13 @@ namespace SweaterV1.WebAPI.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
+    private readonly IUserProvider _userProvider;
     private readonly UserService _userService;
 
-    public UserController(UserService userService)
+    public UserController(UserService userService, IUserProvider userProvider)
     {
         _userService = userService;
+        _userProvider = userProvider;
     }
 
     [Authorize(Roles = "admin")]
@@ -23,10 +26,18 @@ public class UserController : ControllerBase
         return user;
     }
 
-    [HttpGet("user/{userId}")]
-    public async Task<UserModelInformationDto> GetUserAsync(int userId)
+    [HttpGet("user/me")]
+    public async Task<UserModelInformationDto> GetUserAsync()
     {
+        var userId = _userService.GetUserId();
         var user = await _userService.GetEntity(userId);
+        return user;
+    }
+
+    [HttpGet("user/{username}")]
+    public async Task<UserModelInformationDto> GetOtherUserAsync(string username)
+    {
+        var user = await _userService.GetEntityByName(username);
         return user;
     }
 
@@ -38,7 +49,7 @@ public class UserController : ControllerBase
     }
 
     [Authorize]
-    [HttpPut("user/{userId}/user-settings")]
+    [HttpPut("user/user-settings")]
     public async Task<UserModelChangeDto> PutUser(UserModelChangeDto user, int userId)
     {
         await _userService.UpdateEntity(user, userId);

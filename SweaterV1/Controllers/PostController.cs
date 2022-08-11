@@ -23,7 +23,6 @@ public class PostController : ControllerBase
         return post;
     }
 
-    [Authorize]
     [HttpGet("user/{userId}/posts")]
     public async Task<IEnumerable<PostModelInformationDto>> GetListOfPostsAsyncByUser(int userId)
     {
@@ -37,21 +36,21 @@ public class PostController : ControllerBase
         var user = await _postService.GetEntity(postId);
         return user;
     }
-
-    [HttpPost("user/{userId}/post-create")]
+    [Authorize]
+    [HttpPost("user/post-create")]
     public async Task<PostModelCreationDto> PostPost(PostModelCreationDto post)
     {
         await _postService.CreateEntity(post);
         return post;
     }
-
+    [Authorize]
     [HttpPut("post/{postId}/post-change")]
     public async Task<PostModelChangeDto> PutPost(PostModelChangeDto post, int postId)
     {
         await _postService.UpdateEntity(post, postId);
         return post;
     }
-
+    [Authorize]
     [HttpDelete("post/{postId}/delete")]
     public async Task DeletePost(int postId)
     {

@@ -78,6 +78,7 @@ public class Startup
         services.AddDbContext<SweaterDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddHttpContextAccessor();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddScoped<TokenMiddleware>();
@@ -90,6 +91,7 @@ public class Startup
         services.AddScoped<PostService>();
         services.AddScoped<CommentService>();
         services.AddScoped<LikeService>();
+        services.AddScoped<IUserProvider, UserProvider>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
