@@ -15,7 +15,7 @@ public class LikeModel
 
     public UserModel User { get; set; }
 
-    [ForeignKey("PostModel")] public int? PostId { get; set; }
+    [ForeignKey("PostModel")] public int PostId { get; set; }
 
     public PostModel Post { get; set; }
 }

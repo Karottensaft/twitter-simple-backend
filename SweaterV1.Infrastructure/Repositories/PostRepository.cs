@@ -55,9 +55,9 @@ public class PostRepository : IRepository<PostModel>
         GC.SuppressFinalize(this);
     }
 
-    public async Task<IEnumerable<PostModel>> GetEntityListAsyncByUserId(int userId)
+    public async Task<IEnumerable<PostModel>> GetEntityListAsyncByUserId(string username)
     {
-        return await _db.Posts.Where(x => x.UserId == userId).ToListAsync();
+        return await _db.Posts.Where(x => x.Username == username).ToListAsync();
     }
 
     protected virtual void Dispose(bool disposing)

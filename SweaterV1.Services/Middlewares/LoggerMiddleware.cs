@@ -1,8 +1,8 @@
 ﻿using NLog;
 
-namespace SweaterV1.Services.Extensions;
+namespace SweaterV1.Services.Middlewares;
 
-public class LoggerManager : ILoggerManager
+public class LoggerMiddleware : ILoggerMiddleware
 {
     private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 

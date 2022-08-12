@@ -15,44 +15,37 @@ public class CommentController : ControllerBase
         _commentService = commentService;
     }
 
+    [HttpGet("comment/{postId}/comments")]
+    public async Task<IEnumerable<CommentModelInformationDto>> GetListOfCommentsByPost(int postId)
+    {
+        var comment = await _commentService.GerListOfCommentsByPostId(postId);
+        return comment;
+    }
+
+    [HttpPost("user/comment-create")]
+    public async Task<CommentModelCreationDto> PostComment(CommentModelCreationDto comment, int postId)
+    {
+        await _commentService.CreateComment(comment, postId);
+        return comment;
+    }
+
+    [HttpPut("comment/comment-change")]
+    public async Task<CommentModelChangeDto> PutComment(CommentModelChangeDto comment, int commentId)
+    {
+        await _commentService.UpdateComment(comment, commentId);
+        return comment;
+    }
+
+    [HttpDelete("comment/delete")]
+    public async Task DeleteComment(int commentId)
+    {
+        await _commentService.DeleteComment(commentId);
+    }
+
     [Authorize(Roles = "admin")]
-    [HttpGet("comment/all")]
-    public async Task<IEnumerable<CommentModel>> GetListAsync()
+    [HttpDelete("comment/delete-all")]
+    public async Task DeleteAllComments(int postId)
     {
-        var comment = await _commentService.GerListOfEntities();
-        return comment;
-    }
-
-    [HttpGet("comment/{commentId}")]
-    public async Task<CommentModelInformationDto> GetAsync(int commentId)
-    {
-        var comment = await _commentService.GetEntity(commentId);
-        return comment;
-    }
-
-    [HttpPost("user/{userId}/comment-create")]
-    public async Task<CommentModelCreationDto> Post(CommentModelCreationDto comment)
-    {
-        await _commentService.CreateEntity(comment);
-        return comment;
-    }
-
-    [HttpPut("comment/{commentId}/comment-change")]
-    public async Task<CommentModelChangeDto> Put(CommentModelChangeDto comment, int commentId)
-    {
-        await _commentService.UpdateEntity(comment, commentId);
-        return comment;
-    }
-
-    [HttpDelete("comment/{commentId}/delete")]
-    public async Task Delete(int commentId)
-    {
-        await _commentService.DeleteEntity(commentId);
-    }
-
-    [HttpDelete("comment/{postId}/delete-all")]
-    public async Task DeleteAllEntities(int postId)
-    {
-        await _commentService.DeleteAllEntities(postId);
+        await _commentService.DeleteAllComments(postId);
     }
 }

@@ -52,7 +52,7 @@ public class UserRepository : IRepository<UserModel>
         GC.SuppressFinalize(this);
     }
 
-    public async Task<UserModel> GetEntityByUsernameAsync(string username)
+    public async Task<UserModel> GetEntityByNameAsync(string username)
     {
         var user = await _db.Users.SingleOrDefaultAsync(x => x.Username == username);
         return user!;

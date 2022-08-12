@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
-using SweaterV1.Services.Extensions;
 using SweaterV1.Services.Services;
 
 namespace SweaterV1.WebAPI.Controllers;
@@ -9,57 +8,61 @@ namespace SweaterV1.WebAPI.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly IUserProvider _userProvider;
     private readonly UserService _userService;
 
-    public UserController(UserService userService, IUserProvider userProvider)
+    public UserController(UserService userService)
     {
         _userService = userService;
-        _userProvider = userProvider;
+    }
+
+    [HttpPost("user/token")]
+    public async Task<TokenModel> GetToken(UserModelAuthDto user)
+    {
+        return await _userService.GetToken(user);
     }
 
     [Authorize(Roles = "admin")]
     [HttpGet("user/all")]
-    public async Task<IEnumerable<UserModel>> GetListOfUsersAsync()
+    public async Task<IEnumerable<UserModel>> GetListOfUsers()
     {
-        var user = await _userService.GerListOfEntities();
+        var user = await _userService.GerListOfUsers();
         return user;
     }
 
     [HttpGet("user/me")]
-    public async Task<UserModelInformationDto> GetUserAsync()
+    public async Task<UserModelInformationDto> GetCurrentUser()
     {
-        var userId = _userService.GetUserId();
-        var user = await _userService.GetEntity(userId);
+        var user = await _userService.GetCurrentUser();
         return user;
     }
 
     [HttpGet("user/{username}")]
-    public async Task<UserModelInformationDto> GetOtherUserAsync(string username)
+    public async Task<UserModelInformationDto> GetUser(string username)
     {
-        var user = await _userService.GetEntityByName(username);
+        var user = await _userService.GetUserByUsername(username);
         return user;
     }
 
+    [AllowAnonymous]
     [HttpPost("user/registration")]
     public async Task<UserModelRegistrationDto> PostUser(UserModelRegistrationDto user)
     {
-        await _userService.CreateEntity(user);
+        await _userService.CreateUser(user);
         return user;
     }
 
     [Authorize]
     [HttpPut("user/user-settings")]
-    public async Task<UserModelChangeDto> PutUser(UserModelChangeDto user, int userId)
+    public async Task<UserModelChangeDto> PutUser(UserModelChangeDto user)
     {
-        await _userService.UpdateEntity(user, userId);
+        await _userService.UpdateUser(user);
         return user;
     }
 
     [Authorize(Roles = "admin")]
-    [HttpDelete("user/{userId}/delete")]
+    [HttpDelete("user/delete")]
     public async Task DeleteUser(int userId)
     {
-        await _userService.DeleteEntity(userId);
+        await _userService.DeleteUser(userId);
     }
 }

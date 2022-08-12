@@ -5,10 +5,10 @@ using Microsoft.OpenApi.Models;
 using NLog;
 using SweaterV1.Infrastructure.Data;
 using SweaterV1.Infrastructure.Repositories;
-using SweaterV1.Services.Extensions;
-using SweaterV1.Services.Services;
 using SweaterV1.Services.Mapper;
+using SweaterV1.Services.Middlewares;
 using SweaterV1.Services.Options;
+using SweaterV1.Services.Services;
 
 namespace SweaterV1.WebAPI;
 
@@ -24,7 +24,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<ILoggerManager, LoggerManager>();
+        services.AddSingleton<ILoggerMiddleware, LoggerMiddleware>();
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -91,10 +91,10 @@ public class Startup
         services.AddScoped<PostService>();
         services.AddScoped<CommentService>();
         services.AddScoped<LikeService>();
-        services.AddScoped<IUserProvider, UserProvider>();
+        services.AddScoped<IUserProviderMiddleware, UserProviderMiddleware>();
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerMiddleware logger)
     {
         if (env.IsDevelopment())
         {

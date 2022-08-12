@@ -55,6 +55,14 @@ public class LikeRepository : IRepository<LikeModel>
         GC.SuppressFinalize(this);
     }
 
+    public async Task<LikeModel> GetEntityByUserIdAndPostIdAsync(int userId, int postId)
+    {
+        var like = await _db.Likes.SingleOrDefaultAsync(x => x.UserId == userId && x.PostId == postId);
+        if (like != null)
+            return like;
+        throw new ArgumentNullException(nameof(like), "Like was null");
+    }
+
     public async Task<IEnumerable<LikeModel>> GetEntityListAsyncByPostId(int postId)
     {
         return await _db.Likes.Where(x => x.PostId == postId).ToListAsync();

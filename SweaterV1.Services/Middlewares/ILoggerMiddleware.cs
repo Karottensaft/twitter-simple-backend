@@ -1,6 +1,6 @@
-﻿namespace SweaterV1.Services.Extensions;
+﻿namespace SweaterV1.Services.Middlewares;
 
-public interface ILoggerManager
+public interface ILoggerMiddleware
 {
     void LogInfo(string message);
     void LogWarn(string message);

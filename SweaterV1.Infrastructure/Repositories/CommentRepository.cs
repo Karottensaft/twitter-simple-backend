@@ -53,6 +53,11 @@ public class CommentRepository : IRepository<CommentModel>
         GC.SuppressFinalize(this);
     }
 
+    public async Task<IEnumerable<CommentModel>> GetEntityListByPostIdAsync(int postId)
+    {
+        return await _db.Comments.Where(x => x.PostId == postId).ToListAsync();
+    }
+
     public void DeleteAllEntitiesByPostId(int postId)
     {
         _db.Comments.RemoveRange(_db.Comments.Where(x => x.PostId == postId));

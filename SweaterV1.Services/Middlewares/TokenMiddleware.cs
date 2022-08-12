@@ -5,7 +5,7 @@ using SweaterV1.Domain.Models;
 using SweaterV1.Services.Options;
 using SweaterV1.Services.Services;
 
-namespace SweaterV1.Services.Extensions;
+namespace SweaterV1.Services.Middlewares;
 
 public class TokenMiddleware
 {
@@ -16,9 +16,9 @@ public class TokenMiddleware
         _userService = userService;
     }
 
-    public async Task<TokenModel> GetToken(UserModelAuthDto data)
+    public async Task<TokenModel> GetToken(UserModelAuthDto user)
     {
-        var userLogIn = await _userService.ValidateUser(data);
+        var userLogIn = await _userService.ValidateUser(user);
         var identity = GetIdentity(userLogIn);
 
         if (identity == null) throw new ArgumentNullException(nameof(identity), "User was null.");
@@ -33,14 +33,11 @@ public class TokenMiddleware
             expires: now.Add(TimeSpan.FromMinutes(AuthOptions.Lifetime)),
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(),
                 SecurityAlgorithms.HmacSha256));
-        //var userPayload = new { id = userLogIn.UserId };
-        //jwt.Payload["user"] = userPayload;
         var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
         var response = new TokenModel
         {
-            AccessToken = encodedJwt,
-            //Name = identity.Name!
+            AccessToken = encodedJwt
         };
 
         return response;
@@ -52,12 +49,11 @@ public class TokenMiddleware
         {
             new(ClaimsIdentity.DefaultNameClaimType, data.Username),
             new(ClaimsIdentity.DefaultRoleClaimType, data.Role),
-            new Claim(JwtRegisteredClaimNames.Sid, data.UserId.ToString()),
+            new(JwtRegisteredClaimNames.Sid, data.UserId.ToString())
         };
-        
-        var claimsIdentity =
-            new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-                ClaimsIdentity.DefaultRoleClaimType);
+
+        var claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
+            ClaimsIdentity.DefaultRoleClaimType);
         return claimsIdentity;
     }
 }

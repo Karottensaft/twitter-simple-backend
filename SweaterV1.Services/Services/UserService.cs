@@ -1,64 +1,62 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Repositories;
-using SweaterV1.Services.Extensions;
+using SweaterV1.Services.Middlewares;
 
 namespace SweaterV1.Services.Services;
 
 public class UserService
 {
     private readonly IMapper _mapper;
+    private readonly TokenMiddleware _tokenMiddleware;
     private readonly UnitOfWork _unitOfWork;
-    private readonly IUserProvider _userProvider;
+    private readonly IUserProviderMiddleware _userProvider;
 
-    public UserService(UnitOfWork unitOfWork, IMapper mapper, IUserProvider userProvider)
+    public UserService(UnitOfWork unitOfWork, IMapper mapper, IUserProviderMiddleware userProvider,
+        TokenMiddleware tokenMiddleware)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _userProvider = userProvider;
+        _tokenMiddleware = tokenMiddleware;
     }
 
-    public int GetUserId()
+    public async Task<UserModelLoginDto> ValidateUser(UserModelAuthDto userToValidate)
     {
-        var userId = int.Parse(_userProvider.GetUserId());
-        return userId;
-    }
-    public async Task<UserModelLoginDto> ValidateUser(UserModelAuthDto data)
-    {
-        var user = await _unitOfWork.UserRepository.GetEntityByUsernameAsync(data.Username);
-        if (user == null) throw new InvalidDataException("Wrong username or password");
-        if (Pbkdf2HashMiddleware.VerifyPassword(data.Password, user.Password))
-            return _mapper.Map<UserModelLoginDto>(user);
+        var userToMap = await _unitOfWork.UserRepository.GetEntityByNameAsync(userToValidate.Username);
+        if (userToMap == null) throw new InvalidDataException("Wrong username or password");
+        if (HashPasswordMiddleware.VerifyPassword(userToValidate.Password, userToMap.Password))
+            return _mapper.Map<UserModelLoginDto>(userToMap);
         throw new InvalidDataException("Wrong username or password");
     }
 
-    public async Task<IEnumerable<UserModel>> GerListOfEntities()
+    public async Task<IEnumerable<UserModel>> GerListOfUsers()
     {
         return await _unitOfWork.UserRepository.GetEntityListAsync();
     }
 
-    public async Task<UserModelInformationDto> GetEntity(int id)
+    public async Task<UserModelInformationDto> GetCurrentUser()
     {
-        var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(id);
-        return _mapper.Map<UserModelInformationDto>(user);
+        var userId = _userProvider.GetUserId();
+        var usersToMap = await _unitOfWork.UserRepository.GetEntityByIdAsync(userId);
+        return _mapper.Map<UserModelInformationDto>(usersToMap);
     }
 
-    public async Task<UserModelInformationDto> GetEntityByName(string username)
+    public async Task<UserModelInformationDto> GetUserByUsername(string username)
     {
-        var user = await _unitOfWork.UserRepository.GetEntityByUsernameAsync(username);
-        return _mapper.Map<UserModelInformationDto>(user);
+        var userToMap = await _unitOfWork.UserRepository.GetEntityByNameAsync(username);
+        return _mapper.Map<UserModelInformationDto>(userToMap);
     }
 
 
-    public async Task CreateEntity(UserModelRegistrationDto userMapped)
+    public async Task CreateUser(UserModelRegistrationDto userToMap)
     {
-        var userToValidate = await _unitOfWork.UserRepository.GetEntityByUsernameAsync(userMapped.Username);
+        var userToValidate = await _unitOfWork.UserRepository.GetEntityByNameAsync(userToMap.Username);
 
         if (userToValidate == null)
         {
-            userMapped.Password = Pbkdf2HashMiddleware.CreatePasswordHash(userMapped.Password);
-            var user = _mapper.Map<UserModel>(userMapped);
+            userToMap.Password = HashPasswordMiddleware.CreatePasswordHash(userToMap.Password);
+            var user = _mapper.Map<UserModel>(userToMap);
             _unitOfWork.UserRepository.PostEntity(user);
             await _unitOfWork.SaveAsync();
         }
@@ -68,17 +66,26 @@ public class UserService
         }
     }
 
-    public async Task UpdateEntity(UserModelChangeDto userDto, int id)
+    public async Task UpdateUser(UserModelChangeDto userChanged)
     {
-        var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(id);
-        userDto.Password = Pbkdf2HashMiddleware.CreatePasswordHash(userDto.Password);
-        _mapper.Map(userDto, user);
+        var userId = _userProvider.GetUserId();
+        var user = await _unitOfWork.UserRepository.GetEntityByIdAsync(userId);
+        userChanged.Password = HashPasswordMiddleware.CreatePasswordHash(userChanged.Password);
+        _mapper.Map(userChanged, user);
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task DeleteEntity(int id)
+    public async Task DeleteUser(int userId)
     {
-        _unitOfWork.UserRepository.DeleteEntity(id);
+        _unitOfWork.UserRepository.DeleteEntity(userId);
         await _unitOfWork.SaveAsync();
+    }
+
+    public async Task<TokenModel> GetToken(UserModelAuthDto data)
+    {
+        var response = await _tokenMiddleware.GetToken(data);
+        if (response != null)
+            return response;
+        throw new ArgumentNullException(nameof(response), "Response was null");
     }
 }

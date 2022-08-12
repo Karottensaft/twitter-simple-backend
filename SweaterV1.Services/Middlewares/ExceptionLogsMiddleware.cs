@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace SweaterV1.Services.Extensions;
+namespace SweaterV1.Services.Middlewares;
 
 public static class ExceptionLogsMiddleware
 {
-    public static void ConfigureExceptionHandler(this IApplicationBuilder app, ILoggerManager logger)
+    public static void ConfigureExceptionHandler(this IApplicationBuilder app, ILoggerMiddleware logger)
     {
         app.UseExceptionHandler(appError =>
         {

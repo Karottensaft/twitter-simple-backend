@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SweaterV1.Domain.Models;
 using SweaterV1.Infrastructure.Repositories;
+using SweaterV1.Services.Middlewares;
 
 namespace SweaterV1.Services.Services;
 
@@ -8,50 +9,70 @@ public class PostService
 {
     private readonly IMapper _mapper;
     private readonly UnitOfWork _unitOfWork;
+    private readonly IUserProviderMiddleware _userProvider;
 
-    public PostService(UnitOfWork unitOfWork, IMapper mapper)
+    public PostService(UnitOfWork unitOfWork, IMapper mapper, IUserProviderMiddleware userProvider)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _userProvider = userProvider;
     }
 
-    public async Task<IEnumerable<PostModel>> GerListOfEntities()
+    public async Task<IEnumerable<PostModel>> GerListOfPosts()
     {
         return await _unitOfWork.PostRepository.GetEntityListAsync();
     }
 
-    public async Task<IEnumerable<PostModelInformationDto>> GerListOfEntitiesByUser(int userId)
+    public async Task<IEnumerable<PostModelInformationDto>> GerListOfPostsByUsername(string username)
     {
-        var post = await _unitOfWork.PostRepository.GetEntityListAsyncByUserId(userId);
-        var data = _mapper.Map<IEnumerable<PostModelInformationDto>>(post);
-        return data.ToList();
+        var postToMap = await _unitOfWork.PostRepository.GetEntityListAsyncByUserId(username);
+        return _mapper.Map<IEnumerable<PostModelInformationDto>>(postToMap);
     }
 
-    public async Task<PostModelInformationDto> GetEntity(int id)
+    public async Task<PostModelInformationDto> GetPost(int postId)
     {
-        var user = await _unitOfWork.PostRepository.GetEntityByIdAsync(id);
-        return _mapper.Map<PostModelInformationDto>(user);
+        var postToMap = await _unitOfWork.PostRepository.GetEntityByIdAsync(postId);
+        return _mapper.Map<PostModelInformationDto>(postToMap);
     }
 
-    public async Task CreateEntity(PostModelCreationDto postMapped)
+    public async Task CreatePost(PostModelCreationDto postToMap)
     {
-        var post = _mapper.Map<PostModel>(postMapped);
-        _unitOfWork.PostRepository.PostEntity(post);
+        var postMapped = _mapper.Map<PostModel>(postToMap);
+        postMapped.UserId = _userProvider.GetUserId();
+        _unitOfWork.PostRepository.PostEntity(postMapped);
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task UpdateEntity(PostModelChangeDto postDto, int id)
+    public async Task UpdatePost(PostModelChangeDto postChanged, int postId)
     {
-        var post = await _unitOfWork.PostRepository.GetEntityByIdAsync(id);
-        _mapper.Map(postDto, post);
-        await _unitOfWork.SaveAsync();
+        var userId = _userProvider.GetUserId();
+        var post = await _unitOfWork.PostRepository.GetEntityByIdAsync(postId);
+        if (userId == post.UserId)
+        {
+            _mapper.Map(postChanged, post);
+            await _unitOfWork.SaveAsync();
+        }
+        else
+        {
+            throw new AccessViolationException("Current user doesn't match with post owner");
+        }
     }
 
-    public async Task DeleteEntity(int postId)
+    public async Task DeletePost(int postId)
     {
-        _unitOfWork.CommentRepository.DeleteAllEntitiesByPostId(postId);
-        _unitOfWork.LikeRepository.DeleteAllEntitiesByPostId(postId);
-        _unitOfWork.PostRepository.DeleteEntity(postId);
-        await _unitOfWork.SaveAsync();
+        var userId = _userProvider.GetUserId();
+        var postToValidate = await _unitOfWork.PostRepository.GetEntityByIdAsync(postId);
+
+        if (userId == postToValidate.UserId)
+        {
+            _unitOfWork.CommentRepository.DeleteAllEntitiesByPostId(postId);
+            _unitOfWork.LikeRepository.DeleteAllEntitiesByPostId(postId);
+            _unitOfWork.PostRepository.DeleteEntity(postId);
+            await _unitOfWork.SaveAsync();
+        }
+        else
+        {
+            throw new AccessViolationException("Current user doesn't match with post owner");
+        }
     }
 }

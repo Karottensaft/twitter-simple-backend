@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SweaterV1.Domain.Models;
 using SweaterV1.Services.Services;
 
@@ -15,29 +16,30 @@ public class LikeController : ControllerBase
     }
 
     [HttpGet("post/{postId}/likes")]
-    public async Task<IEnumerable<LikeModelInformationDto>> GetListOfLikesAsyncByPost(int postId)
+    public async Task<IEnumerable<LikeModelInformationDto>> GetListOfLikesByPost(int postId)
     {
-        var like = await _likeService.GerListOfEntitiesByPost(postId);
+        var like = await _likeService.GerListOfLikesByPost(postId);
         return like;
     }
 
-
-    [HttpPost("post/{postId}/like-creator")]
-    public async Task<LikeModelCreationDto> PostLike(LikeModelCreationDto like)
+    [HttpPost("post/like-create")]
+    public async Task<LikeModelCreationDto> PostLike(LikeModelCreationDto like, int postId)
     {
-        await _likeService.CreateEntity(like);
+        await _likeService.CreateLike(like, postId);
         return like;
     }
 
-    [HttpDelete("like/{likeId}/delete")]
+    [Authorize]
+    [HttpDelete("like/delete")]
     public async Task DeleteLike(int likeId)
     {
-        await _likeService.DeleteEntity(likeId);
+        await _likeService.DeleteLike(likeId);
     }
 
-    [HttpDelete("like/{postId}/delete-all")]
-    public async Task DeleteAllEntities(int postId)
+    [Authorize(Roles = "admin")]
+    [HttpDelete("like/delete-all")]
+    public async Task DeleteAllLikes(int postId)
     {
-        await _likeService.DeleteAllEntities(postId);
+        await _likeService.DeleteAllLikes(postId);
     }
 }

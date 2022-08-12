@@ -1,8 +1,8 @@
 ﻿using System.Security.Cryptography;
 
-namespace SweaterV1.Services.Extensions;
+namespace SweaterV1.Services.Middlewares;
 
-internal static class Pbkdf2HashMiddleware
+internal static class HashPasswordMiddleware
 {
     private const int SaltLength = 24;
     private const int DerivedKeyLength = 24;
