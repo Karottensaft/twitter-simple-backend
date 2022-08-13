@@ -13,9 +13,6 @@ public class CommentModelInformationDto
 public class CommentModelCreationDto
 {
     [Required] public string CommentContainment { get; set; } = string.Empty;
-
-    public int UserId { get; set; }
-    public int PostId { get; set; }
 }
 
 public class CommentModelChangeDto

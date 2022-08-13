@@ -10,6 +10,4 @@ public class LikeModelInformationDto
 public class LikeModelCreationDto
 {
     public DateTime CreationDate { get; set; }
-    public int UserId { get; set; }
-    public int PostId { get; set; }
 }

@@ -9,7 +9,7 @@ public class LikeModel
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int LikeId { get; set; }
 
-    public DateTime CreationDate { get; set; } = new();
+    public DateTime CreationDate { get; set; }
 
     [ForeignKey("UserModel")] public int UserId { get; set; }
 

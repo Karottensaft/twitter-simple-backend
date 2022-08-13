@@ -10,7 +10,7 @@ public class CommentModel
     public int CommentId { get; set; }
 
     public string CommentContainment { get; set; } = string.Empty;
-    public DateTime CreationDate { get; set; } = new();
+    public DateTime CreationDate { get; set; }
 
     [ForeignKey("UserModel")] public int UserId { get; set; }
 

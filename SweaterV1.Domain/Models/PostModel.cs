@@ -19,7 +19,7 @@ public class PostModel
 
     [Required] public string Containment { get; set; } = string.Empty;
 
-    public DateTime CreationDate { get; set; } = new();
+    public DateTime CreationDate { get; set; }
 
     [ForeignKey("UserModel")] public int UserId { get; set; }
     public string Username { get; set; }

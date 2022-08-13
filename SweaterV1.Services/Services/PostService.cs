@@ -38,7 +38,9 @@ public class PostService
     public async Task CreatePost(PostModelCreationDto postToMap)
     {
         var postMapped = _mapper.Map<PostModel>(postToMap);
+        postMapped.CreationDate = DateTime.UtcNow;
         postMapped.UserId = _userProvider.GetUserId();
+        postMapped.Username =  _userProvider.GetUsername();
         _unitOfWork.PostRepository.PostEntity(postMapped);
         await _unitOfWork.SaveAsync();
     }

@@ -57,10 +57,8 @@ public class LikeRepository : IRepository<LikeModel>
 
     public async Task<LikeModel> GetEntityByUserIdAndPostIdAsync(int userId, int postId)
     {
-        var like = await _db.Likes.SingleOrDefaultAsync(x => x.UserId == userId && x.PostId == postId);
-        if (like != null)
-            return like;
-        throw new ArgumentNullException(nameof(like), "Like was null");
+        var like = await _db.Likes.SingleOrDefaultAsync(x => x.UserId == userId & x.PostId == postId);
+        return like;
     }
 
     public async Task<IEnumerable<LikeModel>> GetEntityListAsyncByPostId(int postId)

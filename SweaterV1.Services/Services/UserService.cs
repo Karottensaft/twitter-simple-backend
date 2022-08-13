@@ -63,6 +63,7 @@ public class UserService
         {
             userToMap.Password = HashPasswordMiddleware.CreatePasswordHash(userToMap.Password);
             var user = _mapper.Map<UserModel>(userToMap);
+            user.CreationDate = DateTime.UtcNow;
             _unitOfWork.UserRepository.PostEntity(user);
             await _unitOfWork.SaveAsync();
         }

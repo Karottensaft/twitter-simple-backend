@@ -21,7 +21,7 @@ public class UserModel
     public string Mail { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public DateTime CreationDate { get; set; } = new();
+    public DateTime CreationDate { get; set; }
     public string Role { get; set; } = "user";
 
     public List<PostModel> Posts { get; set; }

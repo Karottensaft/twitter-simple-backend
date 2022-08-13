@@ -30,6 +30,7 @@ public class CommentService
         var commentMapped = _mapper.Map<CommentModel>(commentToMap);
         commentMapped.UserId = _userProvider.GetUserId();
         commentMapped.PostId = postId;
+        commentMapped.CreationDate = DateTime.UtcNow;
         _unitOfWork.CommentRepository.PostEntity(commentMapped);
         await _unitOfWork.SaveAsync();
     }

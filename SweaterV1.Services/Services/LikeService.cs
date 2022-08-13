@@ -27,14 +27,18 @@ public class LikeService
 
     public async Task CreateLike(LikeModelCreationDto likeToMap, int postId)
     {
+        var like = _mapper.Map<LikeModel>(likeToMap);
+        like.UserId = _userProvider.GetUserId();
+        like.PostId = postId;
         var likeToValidate =
-            await _unitOfWork.LikeRepository.GetEntityByUserIdAndPostIdAsync(likeToMap.UserId, likeToMap.PostId);
+            await _unitOfWork.LikeRepository.GetEntityByUserIdAndPostIdAsync(like.UserId, like.PostId);
 
         if (likeToValidate == null)
         {
             var likeMapped = _mapper.Map<LikeModel>(likeToMap);
             likeMapped.UserId = _userProvider.GetUserId();
             likeMapped.PostId = postId;
+            likeMapped.CreationDate = DateTime.UtcNow;
             _unitOfWork.LikeRepository.PostEntity(likeMapped);
             await _unitOfWork.SaveAsync();
         }

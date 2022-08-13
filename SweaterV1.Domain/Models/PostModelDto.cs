@@ -14,7 +14,6 @@ public class PostModelInformationDto
     public string PostName { get; set; } = string.Empty;
     public string Containment { get; set; } = string.Empty;
     public DateTime CreationDate { get; set; }
-    public int UserId { get; set; }
 }
 
 public class PostModelChangeDto
