@@ -38,7 +38,8 @@ namespace SweaterV1.Infrastructure.Migrations
                     PostName = table.Column<string>(type: "text", nullable: false),
                     Containment = table.Column<string>(type: "text", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,7 +88,7 @@ namespace SweaterV1.Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    PostId = table.Column<int>(type: "integer", nullable: true)
+                    PostId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -96,7 +97,8 @@ namespace SweaterV1.Infrastructure.Migrations
                         name: "FK_Likes_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
-                        principalColumn: "PostId");
+                        principalColumn: "PostId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Likes_Users_UserId",
                         column: x => x.UserId,

@@ -10,7 +10,7 @@ using SweaterV1.Services.Middlewares;
 using SweaterV1.Services.Options;
 using SweaterV1.Services.Services;
 
-namespace SweaterV1.WebAPI;
+namespace SweaterV1;
 
 public class Startup
 {
@@ -69,7 +69,7 @@ public class Startup
         });
         services.AddControllersWithViews();
         services.AddAutoMapper(typeof(UserLoginProfile), typeof(UserRegistrationProfile),
-            typeof(UserInformationProfile), typeof(UserChangeProfile),
+            typeof(UserInformationProfile), typeof(UserChangeProfile), typeof(UserAuthProfile), typeof(UserLoginForTokenProfile),
             typeof(PostInformationProfile), typeof(PostChangeProfile), typeof(PostCreationProfile),
             typeof(CommentInformationProfile), typeof(CommentChangeProfile), typeof(CommentCreateProfile)
             , typeof(LikeInformationProfile), typeof(LikeCreateProfile));
@@ -81,7 +81,7 @@ public class Startup
         services.AddHttpContextAccessor();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        services.AddScoped<TokenMiddleware>();
+
         services.AddScoped<UserRepository>();
         services.AddScoped<PostRepository>();
         services.AddScoped<CommentRepository>();
@@ -91,6 +91,7 @@ public class Startup
         services.AddScoped<PostService>();
         services.AddScoped<CommentService>();
         services.AddScoped<LikeService>();
+        services.AddScoped<TokenMiddleware>();
         services.AddScoped<IUserProviderMiddleware, UserProviderMiddleware>();
     }
 

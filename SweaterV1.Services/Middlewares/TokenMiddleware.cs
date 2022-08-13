@@ -1,31 +1,30 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using SweaterV1.Domain.Models;
 using SweaterV1.Services.Options;
-using SweaterV1.Services.Services;
 
 namespace SweaterV1.Services.Middlewares;
 
 public class TokenMiddleware
 {
-    private readonly UserService _userService;
-
-    public TokenMiddleware(UserService userService)
+    private readonly IMapper _mapper;
+    public TokenMiddleware(IMapper mapper)
     {
-        _userService = userService;
+        _mapper = mapper;
     }
 
-    public async Task<TokenModel> GetToken(UserModelAuthDto user)
+    public TokenModel GetToken(UserModelLoginDto user)
     {
-        var userLogIn = await _userService.ValidateUser(user);
-        var identity = GetIdentity(userLogIn);
+        var userMapped = user;
+        var identity = GetIdentity(_mapper.Map <UserModelLoginDto> (userMapped));
 
         if (identity == null) throw new ArgumentNullException(nameof(identity), "User was null.");
 
         var now = DateTime.UtcNow;
 
-        var jwt = new JwtSecurityToken(
+        var jwtSecurityToken = new JwtSecurityToken(
             AuthOptions.Issuer,
             AuthOptions.Audience,
             notBefore: now,
@@ -33,11 +32,11 @@ public class TokenMiddleware
             expires: now.Add(TimeSpan.FromMinutes(AuthOptions.Lifetime)),
             signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(),
                 SecurityAlgorithms.HmacSha256));
-        var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+        var encodedJwtToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
 
         var response = new TokenModel
         {
-            AccessToken = encodedJwt
+            AccessToken = encodedJwtToken
         };
 
         return response;
@@ -49,7 +48,7 @@ public class TokenMiddleware
         {
             new(ClaimsIdentity.DefaultNameClaimType, data.Username),
             new(ClaimsIdentity.DefaultRoleClaimType, data.Role),
-            new(JwtRegisteredClaimNames.Sid, data.UserId.ToString())
+            new Claim(JwtRegisteredClaimNames.Sid, data.UserId.ToString())
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,

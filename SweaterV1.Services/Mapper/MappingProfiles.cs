@@ -35,6 +35,21 @@ public class UserChangeProfile : Profile
     }
 }
 
+public class UserAuthProfile : Profile
+{
+    public UserAuthProfile()
+    {
+        CreateMap<UserModel, UserModelAuthDto>();
+    }
+}
+public class UserLoginForTokenProfile : Profile
+{
+    public UserLoginForTokenProfile()
+    {
+        CreateMap<UserModel, UserModelLoginDto>();
+    }
+}
+
 public class PostCreationProfile : Profile
 {
     public PostCreationProfile()

@@ -12,7 +12,7 @@ using SweaterV1.Infrastructure.Data;
 namespace SweaterV1.Infrastructure.Migrations
 {
     [DbContext(typeof(SweaterDbContext))]
-    [Migration("20220811181526_Initial")]
+    [Migration("20220812190205_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -65,7 +65,7 @@ namespace SweaterV1.Infrastructure.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("PostId")
+                    b.Property<int>("PostId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
@@ -101,6 +101,10 @@ namespace SweaterV1.Infrastructure.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("PostId");
 
@@ -172,7 +176,9 @@ namespace SweaterV1.Infrastructure.Migrations
                 {
                     b.HasOne("SweaterV1.Domain.Models.PostModel", "Post")
                         .WithMany("Likes")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SweaterV1.Domain.Models.UserModel", "User")
                         .WithMany("Likes")

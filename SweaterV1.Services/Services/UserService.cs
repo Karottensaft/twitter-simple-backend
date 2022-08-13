@@ -21,12 +21,18 @@ public class UserService
         _tokenMiddleware = tokenMiddleware;
     }
 
-    public async Task<UserModelLoginDto> ValidateUser(UserModelAuthDto userToValidate)
+    public async Task<TokenModel> GetToken(UserModelAuthDto userToValidate)
     {
-        var userToMap = await _unitOfWork.UserRepository.GetEntityByNameAsync(userToValidate.Username);
+        UserModel userToMap = await _unitOfWork.UserRepository.GetEntityByNameAsync(userToValidate.Username);
         if (userToMap == null) throw new InvalidDataException("Wrong username or password");
         if (HashPasswordMiddleware.VerifyPassword(userToValidate.Password, userToMap.Password))
-            return _mapper.Map<UserModelLoginDto>(userToMap);
+        {
+            var user = _mapper.Map<UserModelLoginDto>(userToMap);
+            user.UserId = userToMap.UserId;
+            return _tokenMiddleware.GetToken(user);
+            
+        }
+            
         throw new InvalidDataException("Wrong username or password");
     }
 
@@ -79,13 +85,5 @@ public class UserService
     {
         _unitOfWork.UserRepository.DeleteEntity(userId);
         await _unitOfWork.SaveAsync();
-    }
-
-    public async Task<TokenModel> GetToken(UserModelAuthDto data)
-    {
-        var response = await _tokenMiddleware.GetToken(data);
-        if (response != null)
-            return response;
-        throw new ArgumentNullException(nameof(response), "Response was null");
     }
 }

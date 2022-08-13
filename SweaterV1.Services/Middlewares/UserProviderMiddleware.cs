@@ -17,8 +17,6 @@ public class UserProviderMiddleware : IUserProviderMiddleware
         var userId = _httpContextAccessor.HttpContext?.User.Claims
             .SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Sid)
             .Value.ToString();
-        if (userId != null)
-            return int.Parse(userId);
-        throw new ArgumentNullException(nameof(userId), "UserId was null");
+        return int.Parse(userId);
     }
 }
